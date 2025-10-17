@@ -32,8 +32,6 @@ import UserContext from "@/context/UserContext";
 export default function Register({ className }) {
     const { handleRegister } = useContext(UserContext);
 
-    const [selectedRole, setSelectedRole] = useState("student");
-
     const formik = useFormik({
         initialValues: {
             name: "",
@@ -87,9 +85,8 @@ export default function Register({ className }) {
         },
     });
 
-    const handleTabChange = (value) => {
-        setSelectedRole(value);
-        formik.setFieldValue("role", value);
+    const handleTabChange = (e) => {
+        formik.setFieldValue("role", e);
     };
 
     return (
