@@ -7,6 +7,18 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemFooter,
+    ItemHeader,
+    ItemMedia,
+    ItemTitle,
+    ItemGroup,
+} from "@/components/ui/item";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import axios from "@/config/axios";
@@ -53,10 +65,8 @@ export default function SessionsList() {
                 SessionsList component
             </h2>
 
-            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
-                {sessionsList.map((ele) => (
-                    <Link key={ele._id} to={`/session/${ele._id}`}>
-                        <Card className="flex flex-col justify-between h-full rounded-lg border transition-transform duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer">
+            <div className="felx justify-center mt-3">
+                {/* <Card className="flex flex-col justify-between h-full rounded-lg border transition-transform duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer">
                             <div className="flex flex-col flex-grow">
                                 <CardHeader>
                                     <CardTitle>{ele.title}</CardTitle>
@@ -73,9 +83,40 @@ export default function SessionsList() {
                                     book slot
                                 </button>
                             </CardFooter>
-                        </Card>
-                    </Link>
-                ))}
+                        </Card> */}
+
+                <div className="flex w-full flex-col gap-6">
+                    <ItemGroup className="grid grid-cols-3 gap-4">
+                        {sessionsList.map((ele) => {
+                            return (
+                                <Link key={ele._id} to={`/session/${ele._id}`}>
+                                    <Item
+                                        key={ele._id}
+                                        variant="outline"
+                                        className="transition-transform duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                                    >
+                                        <ItemHeader>
+                                            <LazyLoadImage
+                                                src="https://images.unsplash.com/photo-1610280777472-54133d004c8c?q=80&w=640&auto=format&fit=crop"
+                                                alt={ele.title}
+                                                width={128}
+                                                height={128}
+                                                className="aspect-rectangle w-full rounded-sm object-cover"
+                                            />
+                                        </ItemHeader>
+                                        <ItemContent>
+                                            <ItemTitle>{ele.title}</ItemTitle>
+                                            <ItemDescription>
+                                                {ele.description}
+                                            </ItemDescription>
+                                        </ItemContent>
+                                        <ItemFooter>Item Footer</ItemFooter>
+                                    </Item>
+                                </Link>
+                            );
+                        })}
+                    </ItemGroup>
+                </div>
             </div>
         </div>
     );
