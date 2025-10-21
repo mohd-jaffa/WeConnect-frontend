@@ -11,24 +11,27 @@ import Profile from "./pages/Profile";
 import Navbar from "./components/Navbar";
 import { useContext } from "react";
 import UserContext from "./context/UserContext";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 function App() {
     const { user } = useContext(UserContext);
     return (
         <div className="px-4 md:px-6 lg:px-8">
-            {user.role != "admin" ? (
-                <>
-                    <h1 className="m-2 scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
-                        WeConnect!
-                    </h1>
+            {/* <h1 className="m-2 scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+                WeConnect!
+            </h1>
 
-                    <Navbar />
-                </>
-            ) : <Routes><Route><PrivateRoute>
-                            <Home />
-                        </PrivateRoute></Route></Routes>}
+            <Navbar /> */}
 
             <Routes>
+                <Route
+                    path="/admin/*"
+                    element={
+                        <PrivateRoute>
+                            <AdminDashboard />
+                        </PrivateRoute>
+                    }
+                />
                 <Route
                     path="/home"
                     element={

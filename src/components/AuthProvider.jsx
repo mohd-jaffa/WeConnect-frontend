@@ -90,6 +90,8 @@ export default function AuthProvider(props) {
                     navigate("/home");
                 } else if (userResponse.data.role === "teacher") {
                     navigate("/dashboard");
+                } else if (userResponse.data.role === "admin") {
+                    navigate("/admin");
                 }
             }, 2000);
         } catch (err) {
