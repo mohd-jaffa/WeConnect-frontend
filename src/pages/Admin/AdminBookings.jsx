@@ -30,9 +30,9 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-export default function AdminUsers() {
+export default function AdminBookings() {
     const { filter } = useParams();
-    const [users, setUsers] = useState([]);
+    const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [globalFilter, setGlobalFilter] = useState("");
     const [sorting, setSorting] = useState([]);
@@ -41,9 +41,9 @@ export default function AdminUsers() {
     const globalFuzzyFilter = (row, columnId, filterValue) => {
         const search = filterValue.toLowerCase();
         return (
-            rankItem(row.original.name, search).passed ||
-            rankItem(row.original.email, search).passed ||
-            rankItem(row.original._id, search).passed
+            rankItem(row.original.teachersId?.name ?? "", search).passed ||
+            rankItem(row.original.studentsId?.name ?? "", search).passed ||
+            rankItem(row.original._id ?? "", search).passed
         );
     };
 
@@ -59,7 +59,8 @@ export default function AdminUsers() {
                 ),
             },
             {
-                accessorKey: "name",
+                accessorFn: (row) => row.studentsId?.name ?? "N/A",
+                accessorKey: "studentName",
                 header: ({ column }) => (
                     <Button
                         variant="ghost"
@@ -67,16 +68,19 @@ export default function AdminUsers() {
                             column.toggleSorting(column.getIsSorted() === "asc")
                         }
                     >
-                        Name
+                        Student
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 ),
                 cell: ({ row }) => (
-                    <div className="capitalize">{row.getValue("name")}</div>
+                    <div className="capitalize">
+                        {row.getValue("studentName")}
+                    </div>
                 ),
             },
             {
-                accessorKey: "email",
+                accessorFn: (row) => row.teachersId?.name ?? "N/A",
+                accessorKey: "TeacherName",
                 header: ({ column }) => (
                     <Button
                         variant="ghost"
@@ -84,13 +88,43 @@ export default function AdminUsers() {
                             column.toggleSorting(column.getIsSorted() === "asc")
                         }
                     >
-                        Email
+                        Instructor
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 ),
                 cell: ({ row }) => (
-                    <div className="lowercase">{row.getValue("email")}</div>
+                    <div className="capitalize">
+                        {row.getValue("TeacherName")}
+                    </div>
                 ),
+            },
+            {
+                accessorFn: (row) => row.details?.category ?? "N/A",
+                accessorKey: "SessionCategory",
+                header: "Category",
+                cell: ({ row }) => <div>{row.getValue("SessionCategory")}</div>,
+            },
+            {
+                accessorKey: "status",
+                header: "Status",
+                cell: ({ row }) => {
+                    const status = row.getValue("status");
+                    const statusColor = {
+                        completed: "text-green-600",
+                        cancelled: "text-red-600",
+                        upcoming: "text-yellow-600",
+                        ongoing: "text-yellow-600",
+                    };
+                    return (
+                        <span
+                            className={`font-medium capitalize ${
+                                statusColor[status] || "text-gray-600"
+                            }`}
+                        >
+                            {status}
+                        </span>
+                    );
+                },
             },
             {
                 id: "actions",
@@ -129,7 +163,7 @@ export default function AdminUsers() {
     );
 
     const table = useReactTable({
-        data: users,
+        data: bookings,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -147,27 +181,31 @@ export default function AdminUsers() {
     });
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchBookings = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get("/admin/users", {
+                const response = await axios.get("/admin/bookings", {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
-                let filteredUsers = response.data;
-                if (filter === "instructors") {
-                    filteredUsers = filteredUsers.filter(
-                        (user) => user.role === "teacher"
+                let filteredBookings = response.data;
+                if (filter === "upcoming") {
+                    filteredBookings = filteredBookings.filter(
+                        (booking) => booking.status === "upcoming"
                     );
-                } else if (filter === "students") {
-                    filteredUsers = filteredUsers.filter(
-                        (user) => user.role === "student"
+                } else if (filter === "ongoing") {
+                    filteredBookings = filteredBookings.filter(
+                        (booking) => booking.status === "ongoing"
                     );
-                } else if (filter === "requests") {
-                    filteredUsers = filteredUsers.filter(
-                        (user) => user.isApproved === "pending"
+                } else if (filter === "completed") {
+                    filteredBookings = filteredBookings.filter(
+                        (booking) => booking.status === "completed"
+                    );
+                } else if (filter === "cancelled") {
+                    filteredBookings = filteredBookings.filter(
+                        (booking) => booking.status === "cancelled"
                     );
                 }
-                setUsers(filteredUsers);
+                setBookings(filteredBookings);
             } catch (error) {
                 console.error("Error fetching users:", error);
                 alert("Failed to fetch users");
@@ -175,8 +213,7 @@ export default function AdminUsers() {
                 setLoading(false);
             }
         };
-
-        fetchUsers();
+        fetchBookings();
     }, [filter]);
 
     if (loading) {
@@ -189,17 +226,19 @@ export default function AdminUsers() {
     return (
         <div className="w-full p-4">
             <div className="text-lg font-semibold">
-                {filter == "instructors"
-                    ? "All Instructors"
-                    : filter == "students"
-                    ? "All Students"
-                    : filter == "requests"
-                    ? "Approval Requests"
-                    : "All Users"}
+                {filter == "upcoming"
+                    ? "Upcoming Bookings"
+                    : filter == "ongoing"
+                    ? "Ongoing Bookings"
+                    : filter == "completed"
+                    ? "Completed Bookings"
+                    : filter == "cancelled"
+                    ? "Cancelled Bookings"
+                    : "All Bookings"}
             </div>
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Search by name, email, or ID..."
+                    placeholder="Search by Students/Instructors name or ID..."
                     value={globalFilter}
                     onChange={(e) => table.setGlobalFilter(e.target.value)}
                     className="max-w-sm"

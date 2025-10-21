@@ -30,9 +30,9 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-export default function AdminUsers() {
+export default function AdminSessions() {
     const { filter } = useParams();
-    const [users, setUsers] = useState([]);
+    const [sessions, setSessions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [globalFilter, setGlobalFilter] = useState("");
     const [sorting, setSorting] = useState([]);
@@ -41,9 +41,9 @@ export default function AdminUsers() {
     const globalFuzzyFilter = (row, columnId, filterValue) => {
         const search = filterValue.toLowerCase();
         return (
-            rankItem(row.original.name, search).passed ||
-            rankItem(row.original.email, search).passed ||
-            rankItem(row.original._id, search).passed
+            rankItem(row.original.title ?? "", search).passed ||
+            rankItem(row.original.category ?? "", search).passed ||
+            rankItem(row.original._id ?? "", search).passed
         );
     };
 
@@ -59,7 +59,7 @@ export default function AdminUsers() {
                 ),
             },
             {
-                accessorKey: "name",
+                accessorKey: "title",
                 header: ({ column }) => (
                     <Button
                         variant="ghost"
@@ -67,16 +67,21 @@ export default function AdminUsers() {
                             column.toggleSorting(column.getIsSorted() === "asc")
                         }
                     >
-                        Name
+                        Title
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 ),
                 cell: ({ row }) => (
-                    <div className="capitalize">{row.getValue("name")}</div>
+                    <div className="capitalize">{row.getValue("title")}</div>
                 ),
             },
             {
-                accessorKey: "email",
+                accessorKey: "category",
+                header: "Category",
+                cell: ({ row }) => <div>{row.getValue("category")}</div>,
+            },
+            {
+                accessorKey: "createdAt",
                 header: ({ column }) => (
                     <Button
                         variant="ghost"
@@ -84,13 +89,18 @@ export default function AdminUsers() {
                             column.toggleSorting(column.getIsSorted() === "asc")
                         }
                     >
-                        Email
+                        Created At
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 ),
-                cell: ({ row }) => (
-                    <div className="lowercase">{row.getValue("email")}</div>
-                ),
+                cell: ({ row }) => {
+                    const isoString = row.getValue("createdAt");
+                    const formatted =
+                        isoString.split("T")[0] +
+                        " " +
+                        isoString.split("T")[1].slice(0, 5);
+                    return <div className="lowercase">{formatted}</div>;
+                },
             },
             {
                 id: "actions",
@@ -128,8 +138,52 @@ export default function AdminUsers() {
         []
     );
 
+    useEffect(() => {
+        const fetchSessions = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get("/admin/sessions", {
+                    headers: { Authorization: localStorage.getItem("token") },
+                });
+                let filteredSessions = response.data;
+                if (filter === "recurring") {
+                    filteredSessions = filteredSessions
+                        .map((session) => {
+                            const recurringSlots = session.slots?.filter(
+                                (slot) => slot.isRecurring === true
+                            );
+                            if (recurringSlots.length > 0) {
+                                return { ...session, slots: recurringSlots };
+                            }
+                            return null;
+                        })
+                        .filter(Boolean); // remove nulls
+                } else if (filter === "non-recurring") {
+                    filteredSessions = filteredSessions
+                        .map((session) => {
+                            const nonRecurringSlots = session.slots?.filter(
+                                (slot) => slot.isRecurring === false
+                            );
+                            if (nonRecurringSlots.length > 0) {
+                                return { ...session, slots: nonRecurringSlots };
+                            }
+                            return null;
+                        })
+                        .filter(Boolean);
+                }
+                setSessions(filteredSessions);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                alert("Failed to fetch users");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSessions();
+    }, [filter]);
+
     const table = useReactTable({
-        data: users,
+        data: sessions,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -146,39 +200,6 @@ export default function AdminUsers() {
         },
     });
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                setLoading(true);
-                const response = await axios.get("/admin/users", {
-                    headers: { Authorization: localStorage.getItem("token") },
-                });
-                let filteredUsers = response.data;
-                if (filter === "instructors") {
-                    filteredUsers = filteredUsers.filter(
-                        (user) => user.role === "teacher"
-                    );
-                } else if (filter === "students") {
-                    filteredUsers = filteredUsers.filter(
-                        (user) => user.role === "student"
-                    );
-                } else if (filter === "requests") {
-                    filteredUsers = filteredUsers.filter(
-                        (user) => user.isApproved === "pending"
-                    );
-                }
-                setUsers(filteredUsers);
-            } catch (error) {
-                console.error("Error fetching users:", error);
-                alert("Failed to fetch users");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUsers();
-    }, [filter]);
-
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -189,13 +210,11 @@ export default function AdminUsers() {
     return (
         <div className="w-full p-4">
             <div className="text-lg font-semibold">
-                {filter == "instructors"
-                    ? "All Instructors"
-                    : filter == "students"
-                    ? "All Students"
-                    : filter == "requests"
-                    ? "Approval Requests"
-                    : "All Users"}
+                {filter == "recurring"
+                    ? "Recurring Sessions"
+                    : filter == "non-recurring"
+                    ? "Non - Recurring Sessions"
+                    : "All Sessions"}
             </div>
             <div className="flex items-center py-4">
                 <Input

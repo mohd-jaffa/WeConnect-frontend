@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import React from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -17,12 +18,16 @@ import {
 } from "@/components/ui/sidebar";
 import UserContext from "@/context/UserContext";
 import { useContext } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Link, useLocation } from "react-router-dom";
 import PrivateRoute from "@/components/PrivateRoute";
 import AdminUsers from "./AdminUsers";
+import AdminBookings from "./AdminBookings";
+import AdminSessions from "./AdminSessions";
 
 export default function AdminDashboard() {
     const { user } = useContext(UserContext);
+    const location = useLocation();
+    const pathnames = location.pathname.split("/").filter((x) => x);
 
     if (user == null) {
         return (
@@ -48,17 +53,55 @@ export default function AdminDashboard() {
                             />
                             <Breadcrumb>
                                 <BreadcrumbList>
-                                    <BreadcrumbItem className="hidden md:block">
-                                        <BreadcrumbLink href="/admin">
-                                            Dashbaord
+                                    <BreadcrumbItem>
+                                        <BreadcrumbLink asChild>
+                                            <Link
+                                                to="/admin"
+                                                className="capitalize"
+                                            >
+                                                Dashboard
+                                            </Link>
                                         </BreadcrumbLink>
                                     </BreadcrumbItem>
-                                    <BreadcrumbSeparator className="hidden md:block" />
-                                    <BreadcrumbItem>
-                                        <BreadcrumbPage>
-                                            Data Fetching
-                                        </BreadcrumbPage>
-                                    </BreadcrumbItem>
+                                    {pathnames
+                                        .slice(1)
+                                        .map((segment, index) => {
+                                            const isLast =
+                                                index === pathnames.length - 2;
+                                            const to =
+                                                "/" +
+                                                pathnames
+                                                    .slice(0, index + 2)
+                                                    .join("/");
+
+                                            return (
+                                                <React.Fragment key={to}>
+                                                    <BreadcrumbSeparator className="relative top-[1px]" />
+                                                    <BreadcrumbItem>
+                                                        {isLast ? (
+                                                            <BreadcrumbPage className="capitalize">
+                                                                {decodeURIComponent(
+                                                                    segment
+                                                                )}
+                                                            </BreadcrumbPage>
+                                                        ) : (
+                                                            <BreadcrumbLink
+                                                                asChild
+                                                            >
+                                                                <Link
+                                                                    to={to}
+                                                                    className="capitalize"
+                                                                >
+                                                                    {decodeURIComponent(
+                                                                        segment
+                                                                    )}
+                                                                </Link>
+                                                            </BreadcrumbLink>
+                                                        )}
+                                                    </BreadcrumbItem>
+                                                </React.Fragment>
+                                            );
+                                        })}
                                 </BreadcrumbList>
                             </Breadcrumb>
                         </div>
@@ -80,8 +123,38 @@ export default function AdminDashboard() {
                                 </PrivateRoute>
                             }
                         ></Route>
-                        {/* <Route path="" element={<PrivateRoute></PrivateRoute>} ></Route>
-                        <Route path="" element={<PrivateRoute></PrivateRoute>} ></Route> */}
+                        <Route
+                            path="/bookings"
+                            element={
+                                <PrivateRoute>
+                                    <AdminBookings />
+                                </PrivateRoute>
+                            }
+                        ></Route>
+                        <Route
+                            path="/bookings/:filter"
+                            element={
+                                <PrivateRoute>
+                                    <AdminBookings />
+                                </PrivateRoute>
+                            }
+                        ></Route>
+                        <Route
+                            path="/sessions"
+                            element={
+                                <PrivateRoute>
+                                    <AdminSessions />
+                                </PrivateRoute>
+                            }
+                        ></Route>
+                        <Route
+                            path="/sessions/:filter"
+                            element={
+                                <PrivateRoute>
+                                    <AdminSessions />
+                                </PrivateRoute>
+                            }
+                        ></Route>
                     </Routes>
                 </SidebarInset>
             </SidebarProvider>

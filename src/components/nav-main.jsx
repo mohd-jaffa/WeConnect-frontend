@@ -87,6 +87,11 @@ export function NavMain() {
                                         </Link>
                                     </SidebarMenuSubButton>
                                     <SidebarMenuSubButton asChild>
+                                        <Link to="/admin/bookings/ongoing">
+                                            Ongoing
+                                        </Link>
+                                    </SidebarMenuSubButton>
+                                    <SidebarMenuSubButton asChild>
                                         <Link to="/admin/bookings/upcoming">
                                             Upcoming
                                         </Link>
@@ -128,18 +133,13 @@ export function NavMain() {
                                         </Link>
                                     </SidebarMenuSubButton>
                                     <SidebarMenuSubButton asChild>
-                                        <Link to="/admin/sessions/upcoming">
-                                            Upcoming
+                                        <Link to="/admin/sessions/recurring">
+                                            Recurring
                                         </Link>
                                     </SidebarMenuSubButton>
                                     <SidebarMenuSubButton asChild>
-                                        <Link to="/admin/sessions/completed">
-                                            Completed
-                                        </Link>
-                                    </SidebarMenuSubButton>
-                                    <SidebarMenuSubButton asChild>
-                                        <Link to="/admin/sessions/cancelled">
-                                            Cancelled
+                                        <Link to="/admin/sessions/non-recurring">
+                                            Non - Recurring
                                         </Link>
                                     </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
