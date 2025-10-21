@@ -66,8 +66,13 @@ export default function AuthProvider(props) {
             }, 2000);
         } catch (err) {
             toast.dismiss();
-            const errorMessage =
-                err?.response?.data?.error || "Registration failed";
+            console.error(
+                "Backend validation errors:",
+                err?.response?.data?.error
+            );
+            const errorMessage = Array.isArray(err?.response?.data?.error)
+                ? err.response.data.error.map((e) => e.message).join(", ")
+                : err?.response?.data?.error || "Registration failed";
             toast.error(errorMessage);
         }
     };

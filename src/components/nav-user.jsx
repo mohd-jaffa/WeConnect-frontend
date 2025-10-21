@@ -6,7 +6,17 @@ import {
     LogOut,
     Sparkles,
 } from "lucide-react";
-
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -25,11 +35,12 @@ import {
 } from "@/components/ui/sidebar";
 import { useContext } from "react";
 import UserContext from "@/context/UserContext";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 export function NavUser() {
     const { isMobile } = useSidebar();
-
-    const { user } = useContext(UserContext);
+    const { user, handleLogout } = useContext(UserContext);
 
     return (
         <SidebarMenu>
@@ -110,9 +121,16 @@ export function NavUser() {
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <LogOut />
-                            Log out
+                        <DropdownMenuItem asChild>
+                            <Link
+                                onClick={() => (
+                                    handleLogout, toast.info("Logout success!")
+                                )}
+                                to="/login"
+                            >
+                                <LogOut />
+                                Logout
+                            </Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

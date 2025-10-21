@@ -164,7 +164,7 @@ export default function AdminUsers() {
                     );
                 } else if (filter === "requests") {
                     filteredUsers = filteredUsers.filter(
-                        (user) => user.isApproved === "pending"
+                        (user) => user.isApproved === false
                     );
                 }
                 setUsers(filteredUsers);

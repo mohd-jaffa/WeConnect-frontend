@@ -38,7 +38,6 @@ export default function Register({ className }) {
             email: "",
             password: "",
             confirmPassword: "",
-            category: "",
             role: "student",
         },
         validate: (values) =>
@@ -46,8 +45,8 @@ export default function Register({ className }) {
                 {},
                 !values.name
                     ? { name: "Name is required" }
-                    : !/^[A-Za-z]{5,30}$/.test(values.name)
-                    ? { name: "Name must be 5-30 letters only" }
+                    : !/^[A-Za-z\s]{5,30}$/.test(values.name)
+                    ? { name: "Name must be 5-30 letters and spaces only" }
                     : null,
                 !values.email
                     ? { email: "Email is required" }
@@ -70,17 +69,10 @@ export default function Register({ className }) {
                     ? { role: "Role is required" }
                     : !["student", "teacher"].includes(values.role)
                     ? { role: "Role must be 'student' or 'teacher'" }
-                    : null,
-                !values.category && values.role === "teacher"
-                    ? { category: "Category is required" }
                     : null
             ),
         onSubmit: (values, { resetForm }) => {
-            const { confirmPassword, category, ...regValues } = values;
-            const formData =
-                values.role === "student"
-                    ? regValues
-                    : { ...regValues, category };
+            const { confirmPassword, ...formData } = values;
             handleRegister(formData, resetForm);
         },
     });
@@ -313,65 +305,6 @@ export default function Register({ className }) {
                                                             {
                                                                 formik.errors
                                                                     .email
-                                                            }
-                                                        </FieldDescription>
-                                                    )}
-                                            </Field>
-                                            <Field>
-                                                <FieldLabel htmlFor="category">
-                                                    Category
-                                                </FieldLabel>
-                                                <Select
-                                                    value={
-                                                        formik.values.category
-                                                    }
-                                                    onValueChange={(value) =>
-                                                        formik.setFieldValue(
-                                                            "category",
-                                                            value
-                                                        )
-                                                    }
-                                                >
-                                                    <SelectTrigger
-                                                        className="w-[180px]"
-                                                        onBlur={() =>
-                                                            formik.setFieldTouched(
-                                                                "category",
-                                                                true
-                                                            )
-                                                        }
-                                                    >
-                                                        <SelectValue placeholder="Select a category" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectGroup>
-                                                            <SelectLabel>
-                                                                Categories
-                                                            </SelectLabel>
-                                                            <SelectItem value="dance">
-                                                                Dance
-                                                            </SelectItem>
-                                                            <SelectItem value="music">
-                                                                Music
-                                                            </SelectItem>
-                                                            <SelectItem value="martial arts">
-                                                                Martial arts
-                                                            </SelectItem>
-                                                            <SelectItem value="instruments">
-                                                                Instruments
-                                                            </SelectItem>
-                                                            <SelectItem value="cooking">
-                                                                Cooking
-                                                            </SelectItem>
-                                                        </SelectGroup>
-                                                    </SelectContent>
-                                                </Select>
-                                                {formik.touched.category &&
-                                                    formik.errors.category && (
-                                                        <FieldDescription>
-                                                            {
-                                                                formik.errors
-                                                                    .category
                                                             }
                                                         </FieldDescription>
                                                     )}
