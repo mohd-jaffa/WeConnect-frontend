@@ -20,11 +20,10 @@ import UserContext from "@/context/UserContext";
 import { useContext } from "react";
 import { Route, Routes, Link, useLocation } from "react-router-dom";
 import PrivateRoute from "@/components/PrivateRoute";
-import AdminUsers from "./AdminUsers";
-import AdminBookings from "./AdminBookings";
-import AdminSessions from "./AdminSessions";
+import InstructorBookings from "./InstructorBookings";
+import InstructorSessions from "./InstructorSessions";
 
-export default function AdminDashboard() {
+export default function InstructorDashboard() {
     const { user } = useContext(UserContext);
     const location = useLocation();
     const pathnames = location.pathname.split("/").filter((x) => x);
@@ -38,7 +37,6 @@ export default function AdminDashboard() {
             </div>
         );
     }
-
     return (
         <div>
             <SidebarProvider>
@@ -56,7 +54,7 @@ export default function AdminDashboard() {
                                     <BreadcrumbItem>
                                         <BreadcrumbLink asChild>
                                             <Link
-                                                to="/admin"
+                                                to="/instructor"
                                                 className="capitalize"
                                             >
                                                 Dashboard
@@ -106,28 +104,13 @@ export default function AdminDashboard() {
                             </Breadcrumb>
                         </div>
                     </header>
+
                     <Routes>
-                        <Route
-                            path="/users"
-                            element={
-                                <PrivateRoute>
-                                    <AdminUsers />
-                                </PrivateRoute>
-                            }
-                        />
-                        <Route
-                            path="/users/:filter"
-                            element={
-                                <PrivateRoute>
-                                    <AdminUsers />
-                                </PrivateRoute>
-                            }
-                        />
                         <Route
                             path="/bookings"
                             element={
                                 <PrivateRoute>
-                                    <AdminBookings />
+                                    <InstructorBookings />
                                 </PrivateRoute>
                             }
                         />
@@ -135,7 +118,7 @@ export default function AdminDashboard() {
                             path="/bookings/:filter"
                             element={
                                 <PrivateRoute>
-                                    <AdminBookings />
+                                    <InstructorBookings />
                                 </PrivateRoute>
                             }
                         />
@@ -143,15 +126,7 @@ export default function AdminDashboard() {
                             path="/sessions"
                             element={
                                 <PrivateRoute>
-                                    <AdminSessions />
-                                </PrivateRoute>
-                            }
-                        />
-                        <Route
-                            path="/sessions/:filter"
-                            element={
-                                <PrivateRoute>
-                                    <AdminSessions />
+                                    <InstructorSessions />
                                 </PrivateRoute>
                             }
                         />

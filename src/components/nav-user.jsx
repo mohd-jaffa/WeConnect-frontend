@@ -122,12 +122,7 @@ export function NavUser() {
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            <Link
-                                onClick={() => (
-                                    handleLogout, toast.info("Logout success!")
-                                )}
-                                to="/login"
-                            >
+                            <Link onClick={handleLogout} to="/login">
                                 <LogOut />
                                 Logout
                             </Link>

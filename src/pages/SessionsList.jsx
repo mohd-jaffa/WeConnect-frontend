@@ -18,6 +18,8 @@ import {
     ItemTitle,
     ItemGroup,
 } from "@/components/ui/item";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
@@ -40,6 +42,7 @@ export default function SessionsList() {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
                 setSessionsList(response.data);
+                console.log(response.data);
             } catch (err) {
                 toast.error("something went wrong, please login again");
                 handleLogout();
@@ -60,62 +63,62 @@ export default function SessionsList() {
     }
 
     return (
-        <div className="mt-3">
-            <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-                SessionsList component
-            </h2>
-
-            <div className="felx justify-center mt-3">
-                {/* <Card className="flex flex-col justify-between h-full rounded-lg border transition-transform duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer">
-                            <div className="flex flex-col flex-grow">
-                                <CardHeader>
-                                    <CardTitle>{ele.title}</CardTitle>
-                                    <CardDescription>
-                                        {ele.category}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="flex-grow mt-2">
-                                    <p>{ele.description}</p>
-                                </CardContent>
-                            </div>
-                            <CardFooter>
-                                <button onClick={() => alert("booked")}>
-                                    book slot
-                                </button>
-                            </CardFooter>
-                        </Card> */}
-
-                <div className="flex w-full flex-col gap-6">
-                    <ItemGroup className="grid grid-cols-3 gap-4">
-                        {sessionsList.map((ele) => {
-                            return (
-                                <Link key={ele._id} to={`/session/${ele._id}`}>
-                                    <Item
-                                        key={ele._id}
-                                        variant="outline"
-                                        className="transition-transform duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
-                                    >
-                                        <ItemHeader>
-                                            <LazyLoadImage
-                                                src="https://images.unsplash.com/photo-1610280777472-54133d004c8c?q=80&w=640&auto=format&fit=crop"
-                                                alt={ele.title}
-                                                width={128}
-                                                height={128}
-                                                className="aspect-rectangle w-full rounded-sm object-cover"
-                                            />
-                                        </ItemHeader>
-                                        <ItemContent>
-                                            <ItemTitle>{ele.title}</ItemTitle>
-                                            <ItemDescription>
-                                                {ele.description}
-                                            </ItemDescription>
-                                        </ItemContent>
-                                        <ItemFooter>Item Footer</ItemFooter>
-                                    </Item>
-                                </Link>
-                            );
-                        })}
-                    </ItemGroup>
+        <div className="container mx-auto px-4 py-8">
+            <div className="mt-5">
+                <div className="mb-6 flex items-center justify-between">
+                    <h2 className="text-2xl font-bold">Recent Posts</h2>
+                    <Button variant="outline" asChild>
+                        <Link href="#">All Posts</Link>
+                    </Button>
+                </div>
+                <div className="grid grid-cols-4 gap-6">
+                    {sessionsList.map((ele) => {
+                        return (
+                            <Link to={`/session/${ele._id}`}>
+                                <div
+                                    className="bg-card text-card-foreground overflow-hidden rounded-lg border transition-shadow duration-300 hover:shadow-lg"
+                                    key={ele._id}
+                                >
+                                    <div className="relative">
+                                        <img
+                                            src="https://cdn.pixabay.com/photo/2019/07/18/01/44/electric-guitar-4345340_1280.jpg"
+                                            alt={ele.title}
+                                            width={400}
+                                            height={225}
+                                            className="h-48 w-full object-cover"
+                                        />
+                                        <Badge className="absolute top-2 right-2">
+                                            {ele.category}
+                                        </Badge>
+                                    </div>
+                                    <div className="grid gap-2 p-4">
+                                        <h3 className="text-lg leading-tight font-semibold">
+                                            {ele.title}
+                                        </h3>
+                                        <p className="text-muted-foreground line-clamp-3 text-sm">
+                                            {ele.description}
+                                        </p>
+                                        <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                                            <Avatar className="h-6 w-6">
+                                                <AvatarImage
+                                                    src={
+                                                        ele?.teachersId?.avatar
+                                                    }
+                                                />
+                                                <AvatarFallback>
+                                                    {"authorName"
+                                                        .split(" ")
+                                                        .map((n) => n[0])
+                                                        .join("")}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <span>{ele.teachersId.name}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        );
+                    })}
                 </div>
             </div>
         </div>

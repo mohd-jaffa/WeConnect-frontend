@@ -94,7 +94,7 @@ export default function AuthProvider(props) {
                 if (userResponse.data.role === "student") {
                     navigate("/home");
                 } else if (userResponse.data.role === "teacher") {
-                    navigate("/dashboard");
+                    navigate("/instructor");
                 } else if (userResponse.data.role === "admin") {
                     navigate("/admin");
                 }
@@ -109,6 +109,7 @@ export default function AuthProvider(props) {
     const handleLogout = () => {
         localStorage.removeItem("token");
         userDispatch({ type: "LOGOUT" });
+        toast.info("Logout success!");
     };
 
     return (

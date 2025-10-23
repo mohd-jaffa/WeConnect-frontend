@@ -29,7 +29,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import AdminManageUpdates from "./AdminManageUpdates";
 import {
     Dialog,
     DialogClose,
@@ -41,7 +40,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-export default function AdminBookings() {
+export default function InstructorBookings() {
     const { filter } = useParams();
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -52,7 +51,7 @@ export default function AdminBookings() {
     const globalFuzzyFilter = (row, columnId, filterValue) => {
         const search = filterValue.toLowerCase();
         return (
-            rankItem(row.original.teachersId?.name ?? "", search).passed ||
+            rankItem(row.original.time?.start ?? "", search).passed ||
             rankItem(row.original.studentsId?.name ?? "", search).passed ||
             rankItem(row.original._id ?? "", search).passed
         );
@@ -90,8 +89,14 @@ export default function AdminBookings() {
                 ),
             },
             {
-                accessorFn: (row) => row.teachersId?.name ?? "N/A",
-                accessorKey: "TeacherName",
+                accessorFn: (row) => row.details?.category ?? "N/A",
+                accessorKey: "SessionCategory",
+                header: "Category",
+                cell: ({ row }) => <div>{row.getValue("SessionCategory")}</div>,
+            },
+            {
+                accessorFn: (row) => row.time?.start ?? "N/A",
+                accessorKey: "startTime",
                 header: ({ column }) => (
                     <Button
                         variant="ghost"
@@ -99,21 +104,18 @@ export default function AdminBookings() {
                             column.toggleSorting(column.getIsSorted() === "asc")
                         }
                     >
-                        Instructor
+                        Time
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 ),
-                cell: ({ row }) => (
-                    <div className="capitalize">
-                        {row.getValue("TeacherName")}
-                    </div>
-                ),
-            },
-            {
-                accessorFn: (row) => row.details?.category ?? "N/A",
-                accessorKey: "SessionCategory",
-                header: "Category",
-                cell: ({ row }) => <div>{row.getValue("SessionCategory")}</div>,
+                cell: ({ row }) => {
+                    const isoString = row.getValue("startTime");
+                    const formatted =
+                        isoString.split("T")[0] +
+                        " " +
+                        isoString.split("T")[1].slice(0, 5);
+                    return <div className="lowercase">{formatted}</div>;
+                },
             },
             {
                 accessorKey: "status",
@@ -143,32 +145,29 @@ export default function AdminBookings() {
                 cell: ({ row }) => {
                     const rowInfo = row.original;
                     return (
-                        <Dialog>
-                            <DialogTrigger asChild>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="h-8 w-8 p-0">
                                     <span className="sr-only">Open menu</span>
                                     <Ellipsis className="h-4 w-4" />
                                 </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-                                <DialogHeader>
-                                    <DialogTitle>this is edit page</DialogTitle>
-                                    <DialogDescription>
-                                        Make changes to your profile here. Click
-                                        save when you&apos;re done.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <AdminManageUpdates />
-                                <DialogFooter>
-                                    <DialogClose asChild>
-                                        <Button variant="outline">
-                                            Cancel
-                                        </Button>
-                                    </DialogClose>
-                                    <Button type="submit">Save changes</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                    onClick={() => console.log("View", rowInfo)}
+                                >
+                                    View
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="text-red-600 focus:text-red-700"
+                                    onClick={() =>
+                                        console.log("Delete", rowInfo)
+                                    }
+                                >
+                                    Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     );
                 },
             },
@@ -176,29 +175,11 @@ export default function AdminBookings() {
         []
     );
 
-    const table = useReactTable({
-        data: bookings,
-        columns,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        globalFilterFn: globalFuzzyFilter,
-        onGlobalFilterChange: setGlobalFilter,
-        state: {
-            sorting,
-            columnFilters,
-            globalFilter,
-        },
-    });
-
     useEffect(() => {
         const fetchBookings = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get("/admin/bookings", {
+                const response = await axios.get("bookings", {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
                 let filteredBookings = response.data;
@@ -229,6 +210,24 @@ export default function AdminBookings() {
         };
         fetchBookings();
     }, [filter]);
+
+    const table = useReactTable({
+        data: bookings,
+        columns,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        globalFilterFn: globalFuzzyFilter,
+        onGlobalFilterChange: setGlobalFilter,
+        state: {
+            sorting,
+            columnFilters,
+            globalFilter,
+        },
+    });
 
     if (loading) {
         return (
