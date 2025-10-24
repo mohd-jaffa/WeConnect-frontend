@@ -1,37 +1,45 @@
 import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupInput,
+    InputGroupTextarea,
+} from "@/components/ui/input-group";
+import { Label } from "@/components/ui/label";
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-    SheetFooter,
-    SheetClose,
-} from "@/components/ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Mail, MapPin, Phone, UserPen } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import {
+    User,
+    NotebookPen,
+    CircleDollarSign,
+    LogOut,
+    InfoIcon,
+    SearchIcon,
+    MailIcon,
+    CircleUser,
+    PersonStanding,
+    ScrollText,
+    Calendar1,
+} from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import UserContext from "@/context/UserContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Bookings from "./Bookings";
 import EditProfile from "./EditProfile";
 
 export default function Profile() {
     const { user } = useContext(UserContext);
+    const [activeMenu, setActiveMenu] = useState("profile");
 
-    if (user == null) {
+    if (!user) {
         return (
             <div className="flex justify-center items-center h-64">
                 <Button variant="outline" disabled size="sm">
@@ -42,132 +50,114 @@ export default function Profile() {
     }
 
     return (
-        <div className="mt-3 mb-20">
-            <div className="flex justify-between">
-                <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-                    Profile
-                </h2>
-
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button>
-                            <UserPen size={20} strokeWidth={1.5} />
-                            Edit Profile
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                        <SheetHeader>
-                            <SheetTitle>Edit profile</SheetTitle>
-                            <SheetDescription>
-                                Make changes to your profile here. Click save
-                                when you&apos;re done.
-                            </SheetDescription>
-                        </SheetHeader>
-                        <EditProfile />
-                        <SheetFooter>
-                            <Button type="submit" form="edit-profile-form">
-                                Save changes
-                            </Button>
-                            <SheetClose asChild>
-                                <Button variant="outline">Close</Button>
-                            </SheetClose>
-                        </SheetFooter>
-                    </SheetContent>
-                </Sheet>
+        <div className="flex min-h-screen mx-30 mr-30 px-10 py-8">
+            <div className="w-1/4 pr-6">
+                <div className="flex items-center gap-3 mb-8">
+                    <Avatar>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>{user.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <CardTitle>{user.name}</CardTitle>
+                        <CardDescription>{user.role}</CardDescription>
+                    </div>
+                </div>
+                <div className="grid gap-1">
+                    <button
+                        onClick={() => setActiveMenu("profile")}
+                        className={`flex gap-2 px-3 py-2 rounded-md transition-all duration-200 ease-in-out
+              ${
+                  activeMenu === "profile"
+                      ? "bg-gray-100 font-medium text-gray-900 border-l-4 border-gray-400"
+                      : "hover:bg-gray-50 text-gray-600"
+              }`}
+                    >
+                        <User size={16} strokeWidth={1.5} className="mt-1" />
+                        Profile
+                    </button>
+                    <button
+                        onClick={() => setActiveMenu("bookings")}
+                        className={`flex gap-2 px-3 py-2 rounded-md transition-all duration-200 ease-in-out
+              ${
+                  activeMenu === "bookings"
+                      ? "bg-gray-100 font-medium text-gray-900 border-l-4 border-gray-400"
+                      : "hover:bg-gray-50 text-gray-600"
+              }`}
+                    >
+                        <NotebookPen
+                            size={16}
+                            strokeWidth={1.5}
+                            className="mt-1"
+                        />
+                        Bookings
+                    </button>
+                    <button
+                        onClick={() => setActiveMenu("transactions")}
+                        className={`flex gap-2 px-3 py-2 rounded-md transition-all duration-200 ease-in-out
+              ${
+                  activeMenu === "transactions"
+                      ? "bg-gray-100 font-medium text-gray-900 border-l-4 border-gray-400"
+                      : "hover:bg-gray-50 text-gray-600"
+              }`}
+                    >
+                        <CircleDollarSign
+                            size={16}
+                            strokeWidth={1.5}
+                            className="mt-1"
+                        />
+                        Transactions
+                    </button>
+                    <button
+                        onClick={() => setActiveMenu("logout")}
+                        className={`flex gap-2 px-3 py-2 rounded-md transition-all duration-200 ease-in-out
+              ${
+                  activeMenu === "logout"
+                      ? "bg-gray-100 font-medium text-gray-900 border-l-4 border-gray-400"
+                      : "hover:bg-gray-50 text-gray-600"
+              }`}
+                    >
+                        <LogOut size={16} strokeWidth={1.5} className="mt-1" />
+                        Logout
+                    </button>
+                </div>
             </div>
-            <div className="grid grid-cols-6 grid-rows-3 gap-4 h-[480px] w-full">
-                <Card className="col-span-2 row-span-2">
-                    <CardHeader className="flex items-center space-x-2 mb-2">
-                        <div>
-                            <Avatar>
-                                <AvatarImage src="https://github.com/shadcn.png" />
-                                <AvatarFallback>{user.name[0]}</AvatarFallback>
-                            </Avatar>
-                        </div>
-                        <div>
-                            <CardTitle>{user.name}</CardTitle>
-                            <CardDescription>{user.role}</CardDescription>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="bg-muted relative px-[0.3rem] py-[0.2rem] font-mono text-sm font-light mb-5">
-                            &quot;After all,&quot; he said, &quot;everyone
-                            enjoys a good joke, so it&apos;s only fair that they
-                            should pay for the privilege.&quot;
+
+            <Separator
+                orientation="vertical"
+                className="h-auto bg-gray-200 mx-4"
+            />
+
+            <div className="flex-1 pl-6">
+                {activeMenu === "profile" && <EditProfile />}
+
+                {activeMenu === "bookings" && (
+                    <div className="animate-fade-in">
+                        <h2 className="text-2xl font-semibold mb-4">
+                            My Bookings
+                        </h2>
+                        <Bookings />
+                    </div>
+                )}
+
+                {activeMenu === "transactions" && (
+                    <div className="animate-fade-in">
+                        <h2 className="text-2xl font-semibold mb-4">
+                            Transactions
+                        </h2>
+                        <p className="text-gray-600">
+                            Your transaction history appears here.
                         </p>
-                        <div className="flex items-center space-x-2 mb-2 text-gray-500 text-[14px]">
-                            <Mail
-                                size={18}
-                                className="mr-3 mt-0.5"
-                                color="grey"
-                                strokeWidth={1.5}
-                            />
-                            {user.email}
-                        </div>
-                        <div className="flex items-center space-x-2 mb-2 text-gray-500 text-[14px]">
-                            <Phone
-                                size={16}
-                                className="mr-3 mt-0.5"
-                                color="grey"
-                                strokeWidth={1.5}
-                            />
-                            {user.phone}
-                        </div>
-                        <div className="flex items-center space-x-2 mb-2 text-gray-500 text-[14px]">
-                            <MapPin
-                                size={18}
-                                className="mr-3 mt-0.5"
-                                color="grey"
-                                strokeWidth={1.5}
-                            />
-                            {user.location}
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="col-span-4 row-span-3 col-start-3">
-                    <CardHeader>
-                        <CardTitle>
-                            <div>
-                                <Tabs defaultValue="bookings">
-                                    <TabsList className="w-full h-full">
-                                        <TabsTrigger value="bookings">
-                                            Bookings
-                                        </TabsTrigger>
-                                        <TabsTrigger value="transactions">
-                                            Transactions
-                                        </TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="bookings">
-                                        <Bookings />
-                                    </TabsContent>
-                                    <TabsContent value="transactions">
-                                        my transactions here.
-                                    </TabsContent>
-                                </Tabs>
-                            </div>
-                        </CardTitle>
-                        <CardDescription></CardDescription>
-                    </CardHeader>
-                    <CardContent></CardContent>
-                </Card>
-                <Card className="col-span-2 row-start-3">
-                    <CardHeader>
-                        <CardTitle>
-                            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight mb-[-20px]">
-                                Skills
-                            </h4>
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6 pt-2">
-                        <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline">Badge</Badge>
-                            <Badge variant="outline">Badge</Badge>
-                            <Badge variant="outline">Badge</Badge>
-                            <Badge variant="outline">Badge</Badge>
-                            <Badge variant="outline">Badge</Badge>
-                        </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                )}
+
+                {activeMenu === "logout" && (
+                    <div className="animate-fade-in">
+                        <h2 className="text-2xl font-semibold mb-4">Logout</h2>
+                        <p className="text-gray-600">
+                            You have been logged out successfully.
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

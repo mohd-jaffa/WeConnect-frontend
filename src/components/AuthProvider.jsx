@@ -11,7 +11,6 @@ const userReducer = (state, action) => {
                 ...state,
                 isLoggedIn: true,
                 user: action.payload,
-                serverErrors: "",
             };
         }
         case "LOGOUT": {
@@ -29,7 +28,6 @@ export default function AuthProvider(props) {
     const [userState, userDispatch] = useReducer(userReducer, {
         user: null,
         isLoggedIn: false,
-        serverErrors: "",
     });
 
     useEffect(() => {
@@ -106,6 +104,21 @@ export default function AuthProvider(props) {
         }
     };
 
+    const handleProfileUpdate = async (formData) => {
+        try {
+            const response = await axios.put("/users/profile", formData, {
+                headers: { Authorization: localStorage.getItem("token") },
+            });
+            userDispatch({ type: "LOGIN", payload: response.data });
+            console.log(response.data);
+            toast.success("profile updated!");
+        } catch (err) {
+            const errorMessage =
+                err?.response?.data?.error || "Profile Update failed";
+            toast.error(errorMessage);
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         userDispatch({ type: "LOGOUT" });
@@ -119,6 +132,7 @@ export default function AuthProvider(props) {
                 handleLogin,
                 handleRegister,
                 handleLogout,
+                handleProfileUpdate,
                 userDispatch,
             }}
         >
