@@ -106,6 +106,7 @@ export default function AuthProvider(props) {
 
     const handleProfileUpdate = async (formData) => {
         try {
+            console.log(formData);
             const response = await axios.put("/users/profile", formData, {
                 headers: { Authorization: localStorage.getItem("token") },
             });

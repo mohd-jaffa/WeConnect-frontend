@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import {
     User,
@@ -27,17 +28,88 @@ import {
 } from "@/components/ui/tooltip";
 import { useFormik } from "formik";
 import UserContext from "@/context/UserContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
+import React from "react";
+import axios from "@/config/axios";
+
+const LabeledInput = function LabeledInput({
+    id,
+    label,
+    placeholder,
+    tooltip,
+    value,
+    onChange,
+    type = "text",
+    as = "input",
+    disabled = false,
+    Icon = null,
+    onBlur,
+}) {
+    return (
+        <div className="grid w-full max-w-lg gap-4">
+            <InputGroup className="w-full">
+                {as === "textarea" ? (
+                    <InputGroupTextarea
+                        id={id}
+                        name={id}
+                        placeholder={placeholder}
+                        value={value}
+                        onChange={onChange}
+                        disabled={disabled}
+                        onBlur={onBlur}
+                    />
+                ) : (
+                    <InputGroupInput
+                        id={id}
+                        name={id}
+                        type={type}
+                        placeholder={placeholder}
+                        value={value}
+                        onChange={onChange}
+                        disabled={disabled}
+                        onBlur={onBlur}
+                    />
+                )}
+                <InputGroupAddon align="block-start">
+                    {Icon}
+                    <Label htmlFor={id} className="text-foreground">
+                        {label}
+                    </Label>
+
+                    {tooltip && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <InputGroupButton
+                                    variant="ghost"
+                                    aria-label="Help"
+                                    className="ml-auto rounded-full"
+                                    size="icon-xs"
+                                >
+                                    <InfoIcon size={14} />
+                                </InputGroupButton>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>{tooltip}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    )}
+                </InputGroupAddon>
+            </InputGroup>
+        </div>
+    );
+};
 
 export default function EditProfile() {
     const { user, handleProfileUpdate } = useContext(UserContext);
+    const [uploading, setUploading] = useState(false);
 
     const formik = useFormik({
         initialValues: {
             name: user?.name || "",
             bio: user?.bio || "",
             skills: user?.skills?.join(", ") || "",
+            avatar: user?.avatar || "",
         },
         validate: (values) => {
             const errors = {};
@@ -46,7 +118,6 @@ export default function EditProfile() {
             }
             return errors;
         },
-        enableReinitialize: true,
         onSubmit: (values) => {
             const formattedValues = {
                 ...values,
@@ -59,71 +130,36 @@ export default function EditProfile() {
         },
     });
 
-    function LabeledInput({
-        id,
-        label,
-        placeholder,
-        tooltip,
-        value,
-        onChange,
-        type = "text",
-        as = "input",
-        disabled = false,
-        Icon = null,
-        onBlur,
-    }) {
-        return (
-            <div className="grid w-full max-w-lg gap-4">
-                <InputGroup className="w-full">
-                    {as === "textarea" ? (
-                        <InputGroupTextarea
-                            id={id}
-                            name={id}
-                            placeholder={placeholder}
-                            value={value}
-                            onChange={onChange}
-                            disabled={disabled}
-                        />
-                    ) : (
-                        <InputGroupInput
-                            id={id}
-                            name={id}
-                            type={type}
-                            placeholder={placeholder}
-                            value={value}
-                            onChange={onChange}
-                            disabled={disabled}
-                            onBlur={onBlur}
-                        />
-                    )}
-                    <InputGroupAddon align="block-start">
-                        {Icon}
-                        <Label htmlFor={id} className="text-foreground">
-                            {label}
-                        </Label>
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("avatar", file);
+        try {
+            setUploading(true);
+            const response = await axios.post("/avatar", formData, {
+                headers: {
+                    Authorization: localStorage.getItem("token"),
+                    "Content-Type": "multipart/form-data",
+                },
+            });
 
-                        {tooltip && (
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <InputGroupButton
-                                        variant="ghost"
-                                        aria-label="Help"
-                                        className="ml-auto rounded-full"
-                                        size="icon-xs"
-                                    >
-                                        <InfoIcon size={14} />
-                                    </InputGroupButton>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>{tooltip}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        )}
-                    </InputGroupAddon>
-                </InputGroup>
-            </div>
-        );
-    }
+            // Assuming the response returns the uploaded image URL
+            const newAvatarUrl = response.data?.avatarUrl;
+
+            // Update local preview + formik + context
+            formik.setFieldValue("avatar", newAvatarUrl);
+            handleProfileUpdate({ ...user, avatar: newAvatarUrl });
+        } catch (err) {
+            console.error(
+                "Error uploading avatar:",
+                err?.response?.data?.error
+            );
+            alert("Failed to upload avatar. Please try again.");
+        } finally {
+            setUploading(false);
+        }
+    };
 
     return (
         <form onSubmit={formik.handleSubmit}>
@@ -133,6 +169,28 @@ export default function EditProfile() {
                     <span className="text-xs font-mono font-light">
                         view and edit your profile
                     </span>
+                </div>
+                <div className="flex gap-5">
+                    <div>
+                        <Avatar className="w-16 h-16">
+                            <AvatarImage
+                                src={formik.values.avatar || user.avatar}
+                            />
+                            <AvatarFallback>
+                                {user.name.slice(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                        </Avatar>
+                    </div>
+                    <div className="grid w-full max-w-sm items-center gap-3">
+                        <Label htmlFor="picture">Avatar</Label>
+                        <Input
+                            id="picture"
+                            type="file"
+                            accept="image/*"
+                            disabled={uploading}
+                            onChange={handleAvatarChange}
+                        />
+                    </div>
                 </div>
                 <div>
                     <LabeledInput

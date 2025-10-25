@@ -54,8 +54,10 @@ export default function Profile() {
             <div className="w-1/4 pr-6">
                 <div className="flex items-center gap-3 mb-8">
                     <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>{user.name[0]}</AvatarFallback>
+                        <AvatarImage src={user.avatar} />
+                        <AvatarFallback>
+                            {user.name.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
                     </Avatar>
                     <div>
                         <CardTitle>{user.name}</CardTitle>
