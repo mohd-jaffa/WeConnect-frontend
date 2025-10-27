@@ -27,16 +27,28 @@ import {
     ScrollText,
     Calendar1,
 } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import UserContext from "@/context/UserContext";
 import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import Bookings from "./Bookings";
 import EditProfile from "./EditProfile";
 
 export default function Profile() {
-    const { user } = useContext(UserContext);
+    const { user, handleLogout } = useContext(UserContext);
     const [activeMenu, setActiveMenu] = useState("profile");
 
     if (!user) {
@@ -109,18 +121,49 @@ export default function Profile() {
                         />
                         Transactions
                     </button>
-                    <button
-                        onClick={() => setActiveMenu("logout")}
-                        className={`flex gap-2 px-3 py-2 rounded-md transition-all duration-200 ease-in-out
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <button
+                                onClick={() => setActiveMenu("logout")}
+                                className={`flex gap-2 px-3 py-2 rounded-md transition-all duration-200 ease-in-out
               ${
                   activeMenu === "logout"
                       ? "bg-gray-100 font-medium text-gray-900 border-l-4 border-gray-400"
                       : "hover:bg-gray-50 text-gray-600"
               }`}
-                    >
-                        <LogOut size={16} strokeWidth={1.5} className="mt-1" />
-                        Logout
-                    </button>
+                            >
+                                <LogOut
+                                    size={16}
+                                    strokeWidth={1.5}
+                                    className="mt-1"
+                                />
+                                Logout
+                            </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    You have to login again to access your
+                                    account
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel
+                                    onClick={() => setActiveMenu("profile")}
+                                >
+                                    Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction asChild>
+                                    <Link to="/login" onClick={handleLogout}>
+                                        Continue
+                                    </Link>
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
 
@@ -132,14 +175,7 @@ export default function Profile() {
             <div className="flex-1 pl-6">
                 {activeMenu === "profile" && <EditProfile />}
 
-                {activeMenu === "bookings" && (
-                    <div className="animate-fade-in">
-                        <h2 className="text-2xl font-semibold mb-4">
-                            My Bookings
-                        </h2>
-                        <Bookings />
-                    </div>
-                )}
+                {activeMenu === "bookings" && <Bookings />}
 
                 {activeMenu === "transactions" && (
                     <div className="animate-fade-in">
@@ -148,15 +184,6 @@ export default function Profile() {
                         </h2>
                         <p className="text-gray-600">
                             Your transaction history appears here.
-                        </p>
-                    </div>
-                )}
-
-                {activeMenu === "logout" && (
-                    <div className="animate-fade-in">
-                        <h2 className="text-2xl font-semibold mb-4">Logout</h2>
-                        <p className="text-gray-600">
-                            You have been logged out successfully.
                         </p>
                     </div>
                 )}

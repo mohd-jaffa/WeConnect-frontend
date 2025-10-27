@@ -81,7 +81,7 @@ export default function SessionsList() {
                                 >
                                     <div className="relative">
                                         <img
-                                            src="https://cdn.pixabay.com/photo/2019/07/18/01/44/electric-guitar-4345340_1280.jpg"
+                                            src={ele.thumbnail}
                                             alt={ele.title}
                                             width={400}
                                             height={225}

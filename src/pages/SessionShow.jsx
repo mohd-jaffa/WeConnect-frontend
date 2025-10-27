@@ -100,7 +100,7 @@ export default function SessionShow() {
                 <article className="space-y-8">
                     <div className="bg-muted aspect-video w-full overflow-hidden rounded-xl">
                         <img
-                            src={sessionDetails?.image}
+                            src={sessionDetails?.thumbnail}
                             alt="session image"
                             className="h-full w-full object-cover"
                         />

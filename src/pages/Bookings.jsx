@@ -58,111 +58,83 @@ export default function Bookings() {
     }
 
     return (
-        <div className="items-center justify-center">
-            {bookings.length == 0 ? (
-                <div className="m-20">
-                    <Alert variant="default">
-                        <CircleAlert />
-                        <AlertTitle>Nothing Scheduled Yet</AlertTitle>
-                        <AlertDescription>
-                            We couldn't find any past or upcoming bookings
-                        </AlertDescription>
-                    </Alert>
-                </div>
-            ) : (
-                <div>
-                    <Table>
-                        <TableCaption>Your recent bookings</TableCaption>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Title</TableHead>
-                                <TableHead>Instructor</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Time</TableHead>
-                                <TableHead>Status</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {bookings.map((ele) => {
-                                return (
-                                    <TableRow key={ele._id}>
-                                        <TableCell>
-                                            {ele.details.title}
-                                        </TableCell>
-                                        <TableCell className="font-medium">
-                                            {ele?.teachersId.name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {ele?.time.start.slice(0, 10)}
-                                        </TableCell>
-                                        <TableCell>
-                                            {ele?.time.start
-                                                .split("T")[1]
-                                                .slice(0, 5)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <span
-                                                className={`${
-                                                    ele.status === "completed"
-                                                        ? "text-green-600"
-                                                        : ele.status ===
-                                                          "Cancelled"
-                                                        ? "text-red-600"
-                                                        : "text-yellow-600"
-                                                }`}
-                                            >
-                                                {ele?.status}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Dialog>
-                                                <DialogTrigger>
-                                                    <Eye
-                                                        size={16}
-                                                        strokeWidth={1.5}
-                                                        color="grey"
-                                                    />
-                                                </DialogTrigger>
-                                                <DialogContent>
-                                                    <DialogHeader>
-                                                        <DialogTitle>
-                                                            <code className="relative px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
-                                                                Booking Id:{" "}
-                                                                {ele._id}
-                                                            </code>
-                                                        </DialogTitle>
-                                                        <DialogDescription className="bg-muted rounded relative px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold ">
-                                                            <code>
-                                                                Title:{" "}
-                                                                {
-                                                                    ele.details
-                                                                        .title
-                                                                }
-                                                                <br />
-                                                                Description:{" "}
-                                                                {
-                                                                    ele.details
-                                                                        .description
-                                                                }
-                                                                <br />
-                                                                Category:{" "}
-                                                                {
-                                                                    ele.details
-                                                                        .category
-                                                                }
-                                                            </code>
-                                                        </DialogDescription>
-                                                    </DialogHeader>
-                                                </DialogContent>
-                                            </Dialog>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </div>
-            )}
+        <div className="grid gap-5 animate-fade-in">
+            <div className="text-2xl font-semibold">
+                Bookings <br />
+            </div>
+            <div className="items-center justify-center">
+                {bookings.length == 0 ? (
+                    <div className="m-20">
+                        <Alert variant="default">
+                            <CircleAlert />
+                            <AlertTitle>Nothing Scheduled Yet</AlertTitle>
+                            <AlertDescription>
+                                We couldn't find any past or upcoming bookings
+                            </AlertDescription>
+                        </Alert>
+                    </div>
+                ) : (
+                    <div>
+                        <Table>
+                            <TableCaption>Your recent bookings</TableCaption>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Instructor</TableHead>
+                                    <TableHead>Session Title</TableHead>
+                                    <TableHead>Session Description</TableHead>
+                                    <TableHead>Category</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Time</TableHead>
+                                    <TableHead>Status</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {bookings.map((ele) => {
+                                    return (
+                                        <TableRow key={ele._id}>
+                                            <TableCell className="font-medium">
+                                                {ele?.teachersId.name}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ele.details.title}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ele.details.description}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ele.details.category}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ele?.time.start.slice(0, 10)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ele?.time.start
+                                                    .split("T")[1]
+                                                    .slice(0, 5)}
+                                            </TableCell>
+                                            <TableCell>
+                                                <span
+                                                    className={`${
+                                                        ele.status ===
+                                                        "completed"
+                                                            ? "text-green-600"
+                                                            : ele.status ===
+                                                              "Cancelled"
+                                                            ? "text-red-600"
+                                                            : "text-yellow-600"
+                                                    }`}
+                                                >
+                                                    {ele?.status}
+                                                </span>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

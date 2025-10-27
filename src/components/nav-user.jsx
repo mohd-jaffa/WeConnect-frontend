@@ -99,28 +99,44 @@ export function NavUser() {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
+                        {/* <DropdownMenuGroup>
                             <DropdownMenuItem>
                                 <Sparkles />
                                 Upgrade to Pro
                             </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
+                        </DropdownMenuGroup> */}
+                        {/* <DropdownMenuSeparator /> */}
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
-                                <BadgeCheck />
-                                Account
+                                {user?.role == "teacher" && (
+                                    <Link
+                                        to="/instructor/profile"
+                                        className="flex gap-2"
+                                    >
+                                        <BadgeCheck className="mt-[3px]" />
+                                        Account
+                                    </Link>
+                                )}
+                                {user?.role == "admin" && (
+                                    <Link
+                                        to="/admin/profile"
+                                        className="flex gap-2"
+                                    >
+                                        <BadgeCheck className="mt-[3px]" />
+                                        Account
+                                    </Link>
+                                )}
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            {/* <DropdownMenuItem>
                                 <CreditCard />
                                 Billing
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <Bell />
                                 Notifications
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                         </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
+                        {/* <DropdownMenuSeparator /> */}
                         <DropdownMenuItem asChild>
                             <Link onClick={handleLogout} to="/login">
                                 <LogOut />

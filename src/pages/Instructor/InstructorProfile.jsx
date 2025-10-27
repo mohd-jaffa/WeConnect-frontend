@@ -100,7 +100,7 @@ const LabeledInput = function LabeledInput({
     );
 };
 
-export default function EditProfile() {
+export default function InstructorProfile() {
     const { user, handleProfileUpdate } = useContext(UserContext);
     const [uploading, setUploading] = useState(false);
 
@@ -159,101 +159,105 @@ export default function EditProfile() {
     };
 
     return (
-        <form onSubmit={formik.handleSubmit}>
-            <div className="grid gap-5 animate-fade-in">
-                <div className="text-2xl font-semibold">
-                    Profile <br />
-                    <span className="text-xs font-mono font-light">
-                        view and edit your profile
-                    </span>
-                </div>
-                <div className="flex gap-5">
-                    <div>
-                        <Avatar className="w-16 h-16">
-                            <AvatarImage
-                                src={formik.values.avatar || user.avatar}
-                            />
-                            <AvatarFallback>
-                                {user.name.slice(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                        </Avatar>
+        <div className="p-5">
+            <form onSubmit={formik.handleSubmit}>
+                <div className="grid gap-5 animate-fade-in">
+                    <div className="text-2xl font-semibold">
+                        Profile <br />
+                        <span className="text-xs font-mono font-light">
+                            view and edit your profile
+                        </span>
                     </div>
-                    <div className="grid w-full max-w-sm items-center gap-3">
-                        <Label htmlFor="picture">Avatar</Label>
-                        <Input
-                            id="picture"
-                            type="file"
-                            accept="image/*"
-                            disabled={uploading}
-                            onChange={handleAvatarChange}
+                    <div className="flex gap-5">
+                        <div>
+                            <Avatar className="w-16 h-16">
+                                <AvatarImage
+                                    src={formik.values.avatar || user.avatar}
+                                />
+                                <AvatarFallback>
+                                    {user.name.slice(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
+                        <div className="grid w-full max-w-sm items-center gap-3">
+                            <Label htmlFor="picture">Avatar</Label>
+                            <Input
+                                id="picture"
+                                type="file"
+                                accept="image/*"
+                                disabled={uploading}
+                                onChange={handleAvatarChange}
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <LabeledInput
+                            id="name"
+                            label="Name"
+                            placeholder="Enter your name"
+                            tooltip="Your full name as it appears on your profile"
+                            value={formik.values.name}
+                            Icon={<CircleUser className="mt-[1px]" />}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                    </div>
+                    <div>
+                        <LabeledInput
+                            id="email"
+                            label="Email"
+                            placeholder="you@example.com"
+                            value={user.email}
+                            type="email"
+                            disabled={true}
+                            Icon={<MailIcon className="mt-[1px]" />}
+                        />
+                    </div>
+                    <div>
+                        <LabeledInput
+                            id="bio"
+                            label="Bio"
+                            placeholder="Write About Yourself..."
+                            tooltip="Let others know about you"
+                            value={formik.values.bio}
+                            as="textarea"
+                            Icon={<PersonStanding />}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                    </div>
+                    <div>
+                        <LabeledInput
+                            id="skills"
+                            label="Skills"
+                            placeholder="Comma-separated skills..."
+                            tooltip="e.g. React, Tailwind, Node.js"
+                            value={formik.values.skills}
+                            Icon={<ScrollText />}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                    </div>
+                    <div>
+                        <LabeledInput
+                            id="joined"
+                            label="Joined"
+                            value={user?.createdAt.slice(0, 10)}
+                            disabled={true}
+                            Icon={<Calendar1 />}
                         />
                     </div>
                 </div>
-                <div>
-                    <LabeledInput
-                        id="name"
-                        label="Name"
-                        placeholder="Enter your name"
-                        tooltip="Your full name as it appears on your profile"
-                        value={formik.values.name}
-                        Icon={<CircleUser className="mt-[1px]" />}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                    />
-                </div>
-                <div>
-                    <LabeledInput
-                        id="email"
-                        label="Email"
-                        placeholder="you@example.com"
-                        value={user.email}
-                        type="email"
-                        disabled={true}
-                        Icon={<MailIcon className="mt-[1px]" />}
-                    />
-                </div>
-                <div>
-                    <LabeledInput
-                        id="bio"
-                        label="Bio"
-                        placeholder="Write About Yourself..."
-                        tooltip="Let others know about you"
-                        value={formik.values.bio}
-                        as="textarea"
-                        Icon={<PersonStanding />}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                    />
-                </div>
-                <div>
-                    <LabeledInput
-                        id="skills"
-                        label="Skills"
-                        placeholder="Comma-separated skills..."
-                        tooltip="e.g. React, Tailwind, Node.js"
-                        value={formik.values.skills}
-                        Icon={<ScrollText />}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                    />
-                </div>
-                <div>
-                    <LabeledInput
-                        id="joined"
-                        label="Joined"
-                        value={user?.createdAt.slice(0, 10)}
-                        disabled={true}
-                        Icon={<Calendar1 />}
-                    />
-                </div>
-            </div>
-            <Button
-                type="submit"
-                disabled={!formik.isValid || (!formik.dirty && !formik.touched)}
-                className="mt-4"
-            >
-                Submit
-            </Button>
-        </form>
+                <Button
+                    type="submit"
+                    disabled={
+                        !formik.isValid || (!formik.dirty && !formik.touched)
+                    }
+                    className="mt-4"
+                >
+                    Submit
+                </Button>
+            </form>
+        </div>
     );
 }

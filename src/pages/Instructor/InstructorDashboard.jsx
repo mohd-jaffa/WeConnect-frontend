@@ -22,6 +22,8 @@ import { Route, Routes, Link, useLocation } from "react-router-dom";
 import PrivateRoute from "@/components/PrivateRoute";
 import InstructorBookings from "./InstructorBookings";
 import InstructorSessions from "./InstructorSessions";
+import InstructorAddSession from "./InstructorAddSession";
+import InstructorProfile from "./InstructorProfile";
 
 export default function InstructorDashboard() {
     const { user } = useContext(UserContext);
@@ -127,6 +129,22 @@ export default function InstructorDashboard() {
                             element={
                                 <PrivateRoute>
                                     <InstructorSessions />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/sessions/add"
+                            element={
+                                <PrivateRoute>
+                                    <InstructorAddSession />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/profile"
+                            element={
+                                <PrivateRoute>
+                                    <InstructorProfile />
                                 </PrivateRoute>
                             }
                         />
