@@ -36,8 +36,10 @@ export default function Bookings() {
                 const response = await axios.get("/bookings", {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
-                console.log(response.data);
-                setBookings(response.data);
+                const sortedBookings = response.data.sort(
+                    (a, b) => new Date(b.time.start) - new Date(a.time.start)
+                );
+                setBookings(sortedBookings);
             } catch (err) {
                 toast.error("something went wrong, please login again");
                 handleLogout();

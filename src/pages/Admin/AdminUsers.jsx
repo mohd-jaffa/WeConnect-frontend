@@ -11,6 +11,11 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -18,7 +23,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowUpDown, Ellipsis } from "lucide-react";
+import { ArrowUpDown, Ellipsis, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -93,35 +98,64 @@ export default function AdminUsers() {
                 ),
             },
             {
+                accessorKey: "role",
+                header: "Role",
+                cell: ({ row }) => (
+                    <div className="lowercase">{row.getValue("role")}</div>
+                ),
+            },
+            {
                 id: "actions",
                 header: "Action",
                 cell: ({ row }) => {
                     const rowInfo = row.original;
-                    return (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <Ellipsis className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                    onClick={() => console.log("View", rowInfo)}
-                                >
-                                    View
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    className="text-red-600 focus:text-red-700"
-                                    onClick={() =>
-                                        console.log("Delete", rowInfo)
-                                    }
-                                >
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    );
+                    if (filter != "requests") {
+                        return (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0"
+                                    >
+                                        <span className="sr-only">
+                                            Open menu
+                                        </span>
+                                        <Ellipsis className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem
+                                        onClick={() =>
+                                            console.log("View", rowInfo)
+                                        }
+                                    >
+                                        View
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="text-red-600 focus:text-red-700"
+                                        onClick={() =>
+                                            console.log("Delete", rowInfo)
+                                        }
+                                    >
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        );
+                    } else {
+                        return (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button onClick={() => alert("clicked")}>
+                                        <Check />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>approve</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        );
+                    }
                 },
             },
         ],

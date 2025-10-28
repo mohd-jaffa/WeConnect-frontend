@@ -23,6 +23,7 @@ import PrivateRoute from "@/components/PrivateRoute";
 import AdminUsers from "./AdminUsers";
 import AdminBookings from "./AdminBookings";
 import AdminSessions from "./AdminSessions";
+import AdminProfile from "./AdminProfile";
 
 export default function AdminDashboard() {
     const { user } = useContext(UserContext);
@@ -152,6 +153,14 @@ export default function AdminDashboard() {
                             element={
                                 <PrivateRoute>
                                     <AdminSessions />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/profile"
+                            element={
+                                <PrivateRoute>
+                                    <AdminProfile />
                                 </PrivateRoute>
                             }
                         />

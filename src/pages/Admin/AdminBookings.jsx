@@ -29,7 +29,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import AdminManageUpdates from "./AdminManageUpdates";
 import {
     Dialog,
     DialogClose,
