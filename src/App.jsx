@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import InstructorDashboard from "./pages/Instructor/InstructorDashboard";
 import TestPage from "./pages/TestPage";
 import { motion } from "framer-motion";
+import Footer from "./components/Footer";
 
 function App() {
     const { user, isLoggedIn } = useContext(UserContext);
@@ -82,6 +83,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/test" element={<TestPage />} />
                 </Routes>
+                <Footer />
             </div>
         </motion.div>
     );
