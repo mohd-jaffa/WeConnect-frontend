@@ -2,8 +2,20 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarClock, Users } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchHomeTeachers } from "@/slices/teacherSlice";
 
 export default function Home() {
+    const dispatch = useDispatch();
+    const { data, error, loading } = useSelector((state) => {
+        return state.teacher;
+    });
+
+    useEffect(() => {
+        dispatch(fetchHomeTeachers());
+    }, []);
+
     const Carousel = () => {
         const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -188,10 +200,63 @@ export default function Home() {
         </section>
     );
 
+    const TeachersSection = () => {
+        const TeacherCard = ({ name, skills, avatar, createdAt }) => (
+            <div className="p-6 rounded-lg border border-border hover:border-foreground transition space-y-4 group cursor-pointer">
+                <div className="w-16 h-16 bg-foreground rounded-full flex items-center justify-center text-background font-bold text-xl">
+                    {avatar}
+                </div>
+
+                <div className="space-y-2">
+                    <h3 className="font-bold text-lg group-hover:text-foreground transition">
+                        {name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                        {skills?.join(", ") || "No skills listed"}
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                        <span>Since {createdAt.slice(0,10)}</span>
+                    </div>
+                </div>
+
+                <Button size="sm" className="w-full">
+                    View Profile
+                </Button>
+            </div>
+        );
+        return (
+            <section className="border-t border-border px-4 sm:px-6 lg:px-8 py-12">
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl md:text-3xl font-bold capitalize">
+                            Some of our tutors
+                        </h2>
+                        <Link
+                            href="#"
+                            className="text-sm hover:text-muted-foreground transition"
+                        >
+                            View All →
+                        </Link>
+                    </div>
+
+                    <div className="grid md:grid-cols-4 gap-6">
+                        {data.map((ele) => (
+                            <TeacherCard key={ele.name} {...ele} />
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    };
+
     return (
         <div>
             <Carousel />
             <Progress />
+            <TeachersSection />
         </div>
     );
 }
