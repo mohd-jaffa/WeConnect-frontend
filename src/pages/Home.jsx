@@ -1,9 +1,197 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import { CalendarClock, Users } from "lucide-react";
+
 export default function Home() {
+    const Carousel = () => {
+        const [currentSlide, setCurrentSlide] = useState(0);
+
+        const slides = [
+            {
+                title: "Welcome back!",
+                subtitle: "Continue your learning journey",
+                description: "You have 2 upcoming sessions this week",
+                color: "bg-card",
+                image: "https://i.ibb.co/DHzhsHm0/Screenshot-2025-10-29-234332-removebg-preview.png",
+            },
+            {
+                title: "Master New Skills",
+                subtitle: "Explore trending subjects",
+                description: "Discover courses from top-rated tutors",
+                color: "bg-card",
+                image: "https://i.ibb.co/MQQFQB6/Screenshot-2025-10-29-234716-removebg-preview.png",
+            },
+            {
+                title: "Achieve Your Goals",
+                subtitle: "Track your progress",
+                description: "See how far you've come in your learning",
+                color: "bg-card",
+                image: "https://i.ibb.co/QFPDbxsT/5259881-20616.jpg",
+            },
+        ];
+
+        useEffect(() => {
+            const interval = setInterval(() => {
+                setCurrentSlide((prev) => (prev + 1) % slides.length);
+            }, 5000);
+            return () => clearInterval(interval);
+        }, [slides.length]);
+
+        const nextSlide = () =>
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        const prevSlide = () =>
+            setCurrentSlide(
+                (prev) => (prev - 1 + slides.length) % slides.length
+            );
+
+        const variants = {
+            enter: { opacity: 0, x: 100 },
+            center: { opacity: 1, x: 0 },
+            exit: { opacity: 0, x: -100 },
+        };
+
+        return (
+            <section className="px-4 sm:px-6 lg:px-8 py-8">
+                <div className="max-w-6xl mx-auto bg-gray-50">
+                    <div className="relative overflow-hidden rounded-lg border border-border">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={currentSlide}
+                                variants={variants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{
+                                    duration: 0.8,
+                                    ease: "easeInOut",
+                                }}
+                                className={`${slides[currentSlide].color} p-8 md:p-12 flex justify-between bg-gray-50`}
+                            >
+                                <div className="relative z-10 space-y-4">
+                                    <h2 className="text-4xl md:text-5xl font-bold">
+                                        {slides[currentSlide].title}
+                                    </h2>
+                                    <p className="text-lg text-muted-foreground">
+                                        {slides[currentSlide].subtitle}
+                                    </p>
+                                    <p className="text-muted-foreground">
+                                        {slides[currentSlide].description}
+                                    </p>
+                                    <Button className="mt-4">
+                                        Explore Now
+                                    </Button>
+                                </div>
+                                <img
+                                    src={slides[currentSlide].image}
+                                    alt="carousel image"
+                                    className="w-auto size-50"
+                                />
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Controls */}
+                        <div className="flex items-center justify-between px-6 py-4">
+                            <button
+                                onClick={prevSlide}
+                                className="p-2 hover:bg-foreground hover:text-background rounded-lg transition"
+                                aria-label="Previous slide"
+                            >
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M15 19l-7-7 7-7"
+                                    />
+                                </svg>
+                            </button>
+
+                            <div className="flex items-center gap-2">
+                                {slides.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setCurrentSlide(index)}
+                                        className={`w-2 h-2 rounded-full transition ${
+                                            index === currentSlide
+                                                ? "bg-foreground w-8"
+                                                : "bg-muted-foreground"
+                                        }`}
+                                        aria-label={`Go to slide ${index + 1}`}
+                                    />
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={nextSlide}
+                                className="p-2 hover:bg-foreground hover:text-background rounded-lg transition"
+                                aria-label="Next slide"
+                            >
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M9 5l7 7-7 7"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+    };
+
+    const Progress = () => (
+        <section className="border-t border-border px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-6xl mx-auto">
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">
+                    Your Learning Stats
+                </h2>
+                <div className="grid md:grid-cols-4 gap-6">
+                    {[
+                        {
+                            label: "Hours Learned",
+                            value: "24.5",
+                            icon: <CalendarClock />,
+                        },
+                        {
+                            label: "Sessions Completed",
+                            value: "12",
+                            icon: <Users />,
+                        },
+                    ].map((stat) => (
+                        <div
+                            key={stat.label}
+                            className="p-6 rounded-lg border border-border hover:border-foreground transition space-y-3 bg-gray-50"
+                        >
+                            <div className="text-3xl">{stat.icon}</div>
+                            <p className="text-muted-foreground text-sm">
+                                {stat.label}
+                            </p>
+                            <p className="text-2xl font-bold">{stat.value}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+
     return (
         <div>
-            <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-                Home component
-            </h2>
+            <Carousel />
+            <Progress />
         </div>
     );
 }

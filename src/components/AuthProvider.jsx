@@ -101,6 +101,7 @@ export default function AuthProvider(props) {
             toast.dismiss();
             const errorMessage = err?.response?.data?.error || "Login failed";
             toast.error(errorMessage);
+            navigate("/");
         }
     };
 

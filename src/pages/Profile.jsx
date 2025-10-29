@@ -46,6 +46,7 @@ import { useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Bookings from "./Bookings";
 import EditProfile from "./EditProfile";
+import Transactions from "./Transactions";
 
 export default function Profile() {
     const location = useLocation();
@@ -164,7 +165,7 @@ export default function Profile() {
                                     Cancel
                                 </AlertDialogCancel>
                                 <AlertDialogAction asChild>
-                                    <Link to="/login" onClick={handleLogout}>
+                                    <Link to="/" onClick={handleLogout}>
                                         Continue
                                     </Link>
                                 </AlertDialogAction>
@@ -184,16 +185,7 @@ export default function Profile() {
 
                 {activeMenu === "bookings" && <Bookings />}
 
-                {activeMenu === "transactions" && (
-                    <div className="animate-fade-in">
-                        <h2 className="text-2xl font-semibold mb-4">
-                            Transactions
-                        </h2>
-                        <p className="text-gray-600">
-                            Your transaction history appears here.
-                        </p>
-                    </div>
-                )}
+                {activeMenu === "transactions" && <Transactions />}
             </div>
         </div>
     );

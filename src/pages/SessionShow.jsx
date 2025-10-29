@@ -5,11 +5,16 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     Facebook,
-    Twitter,
+    MessageCircle,
     Linkedin,
     IndianRupee,
     AlertCircleIcon,
 } from "lucide-react";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -31,6 +36,7 @@ import useRazorpayPayment from "@/utils/razorpay";
 export default function SessionShow() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const currentUrl = window.location.href;
     const { handleLogout } = useContext(UserContext);
     const { handlePayment } = useRazorpayPayment();
     const [date, setDate] = useState("");
@@ -39,6 +45,25 @@ export default function SessionShow() {
     const [selectedSlot, setSelectedSlot] = useState("");
     const [loading, setLoading] = useState(false);
     const [lockError, setLockError] = useState("");
+
+    const handleFacebookShare = () => {
+        const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+            currentUrl
+        )}`;
+        window.open(fbUrl, "_blank", "width=600,height=400");
+    };
+    const handleWhatsAppShare = () => {
+        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+            "Check this out: " + currentUrl
+        )}`;
+        window.open(waUrl, "_blank");
+    };
+    const handleLinkedInShare = () => {
+        const liUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+            currentUrl
+        )}`;
+        window.open(liUrl, "_blank", "width=600,height=400");
+    };
 
     useEffect(() => {
         const fetchTeachers = async () => {
@@ -174,27 +199,52 @@ export default function SessionShow() {
                         <span className="text-muted-foreground text-[11px] font-medium tracking-widest uppercase">
                             Share this
                         </span>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="hover:bg-blog-hover h-9 w-9 rounded-full"
-                        >
-                            <Twitter />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="hover:bg-blog-hover h-9 w-9 rounded-full"
-                        >
-                            <Facebook />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="hover:bg-blog-hover h-9 w-9 rounded-full"
-                        >
-                            <Linkedin />
-                        </Button>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="hover:bg-blog-hover h-9 w-9 rounded-full"
+                                    onClick={handleWhatsAppShare}
+                                >
+                                    <MessageCircle />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>share on whatsapp</p>
+                            </TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="hover:bg-blog-hover h-9 w-9 rounded-full"
+                                    onClick={handleFacebookShare}
+                                >
+                                    <Facebook />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>share on facebook</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="hover:bg-blog-hover h-9 w-9 rounded-full"
+                                    onClick={handleLinkedInShare}
+                                >
+                                    <Linkedin />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>share on linkedin</p>
+                            </TooltipContent>
+                        </Tooltip>
                     </div>
                 </div>
             </div>

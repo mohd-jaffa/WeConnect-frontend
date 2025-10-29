@@ -7,7 +7,6 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
     NavigationMenu,
@@ -18,7 +17,8 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { LogOut, User, House } from "lucide-react";
+import { LogOut, User, BookOpen, SquareChartGantt, Wallet } from "lucide-react";
+import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import UserContext from "@/context/UserContext";
 import { useContext, useState } from "react";
@@ -27,6 +27,7 @@ export default function Navbar() {
     const { isLoggedIn, handleLogout, user } = useContext(UserContext);
     const [showAlert, setShowAlert] = useState(false);
 
+    // Hide navbar for admin & teacher
     if (
         isLoggedIn &&
         user &&
@@ -34,16 +35,25 @@ export default function Navbar() {
     ) {
         return null;
     }
+
     return (
-        <div>
-            {isLoggedIn && user?.role === "student" ? (
-                <>
-                    <h1 className="m-2 scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
-                        WeConnect!
-                    </h1>
-                    <div className="w-full flex justify-center py-4 border-b">
+        <div className="border-b border-border bg-background">
+            <nav className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between relative z-50">
+                {/* Logo */}
+                <Link to="/">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
+                            <BookOpen color="#ffffff" size={18} />
+                        </div>
+                        <span className="text-xl font-bold">WeConnect</span>
+                    </div>
+                </Link>
+
+                {/* Logged-in Navbar for Students */}
+                {isLoggedIn && user?.role === "student" ? (
+                    <div className="flex-1 flex justify-center">
                         <NavigationMenu viewport={false}>
-                            <NavigationMenuList className="relative">
+                            <NavigationMenuList className="flex items-center gap-4">
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
                                         asChild
@@ -52,6 +62,7 @@ export default function Navbar() {
                                         <Link to="/home">Home</Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
+
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
                                         asChild
@@ -60,6 +71,7 @@ export default function Navbar() {
                                         <Link to="/dashboard">Dashboard</Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
+
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
                                         asChild
@@ -68,6 +80,8 @@ export default function Navbar() {
                                         <Link to="/sessions">Sessions</Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
+
+                                {/* Account Dropdown */}
                                 <NavigationMenuItem className="hidden md:block">
                                     <NavigationMenuTrigger>
                                         Account
@@ -78,22 +92,52 @@ export default function Navbar() {
                                                 <NavigationMenuLink asChild>
                                                     <Link
                                                         to="/profile"
-                                                        className="flex-row items-center gap-2 leading-none"
+                                                        className="flex flex-row items-center gap-2 whitespace-nowrap hover:text-foreground transition"
                                                     >
                                                         <User className="w-4 h-4" />
-                                                        profile
+                                                        Profile
                                                     </Link>
                                                 </NavigationMenuLink>
+                                            </li>
+                                            <li>
                                                 <NavigationMenuLink asChild>
                                                     <Link
+                                                        to="/profile"
+                                                        state={{
+                                                            menu: "bookings",
+                                                        }}
+                                                        className="flex flex-row items-center gap-2 whitespace-nowrap hover:text-foreground transition"
+                                                    >
+                                                        <SquareChartGantt className="w-4 h-4" />
+                                                        My Bookings
+                                                    </Link>
+                                                </NavigationMenuLink>
+                                            </li>
+                                            <li>
+                                                <NavigationMenuLink asChild>
+                                                    <Link
+                                                        to="/profile"
+                                                        state={{
+                                                            menu: "transactions",
+                                                        }}
+                                                        className="flex flex-row items-center gap-2 whitespace-nowrap hover:text-foreground transition"
+                                                    >
+                                                        <Wallet className="w-4 h-4" />
+                                                        My Transactions
+                                                    </Link>
+                                                </NavigationMenuLink>
+                                            </li>
+                                            <li>
+                                                <NavigationMenuLink asChild>
+                                                    <button
                                                         onClick={() =>
                                                             setShowAlert(true)
                                                         }
-                                                        className="flex-row items-center gap-2 leading-none"
+                                                        className="flex flex-row items-center gap-2 whitespace-nowrap w-full text-left hover:text-foreground transition justify-start"
                                                     >
                                                         <LogOut className="w-4 h-4" />
                                                         Logout
-                                                    </Link>
+                                                    </button>
                                                 </NavigationMenuLink>
                                             </li>
                                         </ul>
@@ -102,37 +146,42 @@ export default function Navbar() {
                             </NavigationMenuList>
                         </NavigationMenu>
                     </div>
-                </>
-            ) : (
-                <>
-                    <h1 className="m-2 scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
-                        WeConnect!
-                    </h1>
-                    <div className="w-full flex justify-center py-4 border-b">
+                ) : (
+                    // Logged-out Navbar
+                    <div className="flex items-center gap-3">
                         <NavigationMenu>
-                            <NavigationMenuList>
+                            <NavigationMenuList className="flex items-center gap-3">
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
                                         asChild
-                                        className={navigationMenuTriggerStyle()}
+                                        className="hover:bg-transparent focus:bg-transparent"
                                     >
-                                        <Link to="/login">Login</Link>
+                                        <Link to="/login">
+                                            <Button variant="ghost" size="sm">
+                                                Sign In
+                                            </Button>
+                                        </Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
+
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
                                         asChild
-                                        className={navigationMenuTriggerStyle()}
+                                        className="hover:bg-transparent focus:bg-transparent"
                                     >
-                                        <Link to="/register">Register</Link>
+                                        <Link to="/register">
+                                            <Button size="sm">
+                                                Get Started
+                                            </Button>
+                                        </Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
                             </NavigationMenuList>
                         </NavigationMenu>
                     </div>
-                </>
-            )}
-            <>
+                )}
+
+                {/* Logout Confirmation Alert */}
                 {showAlert && (
                     <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
                         <AlertDialogContent>
@@ -141,14 +190,14 @@ export default function Navbar() {
                                     Are you absolutely sure?
                                 </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    You have to login again to access your
-                                    account
+                                    You will need to log in again to access your
+                                    account.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction asChild>
-                                    <Link to="/login" onClick={handleLogout}>
+                                    <Link to="/" onClick={handleLogout}>
                                         Continue
                                     </Link>
                                 </AlertDialogAction>
@@ -156,7 +205,7 @@ export default function Navbar() {
                         </AlertDialogContent>
                     </AlertDialog>
                 )}
-            </>
+            </nav>
         </div>
     );
 }
