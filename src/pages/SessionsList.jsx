@@ -98,21 +98,31 @@ export default function SessionsList() {
                                         <p className="text-muted-foreground line-clamp-3 text-sm">
                                             {ele.description}
                                         </p>
-                                        <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                                            <Avatar className="h-6 w-6">
-                                                <AvatarImage
-                                                    src={
-                                                        ele?.teachersId?.avatar
-                                                    }
-                                                />
-                                                <AvatarFallback>
-                                                    {"authorName"
-                                                        .split(" ")
-                                                        .map((n) => n[0])
-                                                        .join("")}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <span>{ele.teachersId.name}</span>
+                                        <div className="flex justify-between">
+                                            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                                                <Avatar className="h-6 w-6">
+                                                    <AvatarImage
+                                                        src={
+                                                            ele?.teachersId
+                                                                ?.avatar
+                                                        }
+                                                    />
+                                                    <AvatarFallback>
+                                                        {"authorName"
+                                                            .split(" ")
+                                                            .map((n) => n[0])
+                                                            .join("")}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <span>
+                                                    {ele.teachersId.name}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <small className="text-sm leading-none font-medium">
+                                                    {ele?.amount}₹/hr
+                                                </small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

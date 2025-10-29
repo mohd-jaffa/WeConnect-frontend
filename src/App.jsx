@@ -13,7 +13,7 @@ import { useContext } from "react";
 import UserContext from "./context/UserContext";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import InstructorDashboard from "./pages/Instructor/InstructorDashboard";
-import MacOSDockDemo from "./components/dock";
+import TestPage from "./pages/TestPage";
 
 function App() {
     const { user, isLoggedIn } = useContext(UserContext);
@@ -73,6 +73,7 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/test" element={<TestPage />} />
             </Routes>
         </div>
     );

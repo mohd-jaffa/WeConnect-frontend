@@ -50,7 +50,6 @@ export default function InstructorSessions() {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
                 setSessions(response.data);
-                console.log(response.data);
             } catch (err) {
                 console.error("Error fetching sessions:", err);
                 alert("Failed to fetch sessions");
@@ -109,6 +108,9 @@ export default function InstructorSessions() {
                             <p className="text-muted-foreground text-l">
                                 {ele.description}
                             </p>
+                            <small className="text-sm leading-none font-medium">
+                                {ele?.amount}₹ per hour
+                            </small>
                         </CardContent>
 
                         <CardFooter className="grid">
@@ -116,20 +118,28 @@ export default function InstructorSessions() {
                             {(() => {
                                 if (!ele?.slots || ele.slots.length === 0) {
                                     return (
-                                        <p className="text-muted-foreground">No slots available</p>
+                                        <p className="text-muted-foreground">
+                                            No slots available
+                                        </p>
                                     );
                                 }
 
                                 // Separate recurring and non-recurring slots
-                                const recurringSlots = ele.slots.filter(slot => slot.isRecurring);
-                                const nonRecurringSlots = ele.slots.filter(slot => !slot.isRecurring);
-                                
+                                const recurringSlots = ele.slots.filter(
+                                    (slot) => slot.isRecurring
+                                );
+                                const nonRecurringSlots = ele.slots.filter(
+                                    (slot) => !slot.isRecurring
+                                );
+
                                 // Determine slot type label
-                                const slotTypeLabel = recurringSlots.length > 0 && nonRecurringSlots.length > 0
-                                    ? "Both"
-                                    : recurringSlots.length > 0
-                                    ? "Repeating"
-                                    : "Non-Repeating";
+                                const slotTypeLabel =
+                                    recurringSlots.length > 0 &&
+                                    nonRecurringSlots.length > 0
+                                        ? "Both"
+                                        : recurringSlots.length > 0
+                                        ? "Repeating"
+                                        : "Non-Repeating";
 
                                 return (
                                     <code className="relative rounded py-[0.2rem] font-mono text-sm font-semibold">
@@ -138,60 +148,122 @@ export default function InstructorSessions() {
                                             {/* Render recurring slots */}
                                             {recurringSlots.length > 0 && (
                                                 <div className="border-l-2 border-blue-500 pl-3">
-                                                    {recurringSlots.length > 0 && nonRecurringSlots.length > 0 && (
-                                                        <p className="font-semibold text-blue-600 mb-2">Recurring Slots:</p>
+                                                    {recurringSlots.length >
+                                                        0 &&
+                                                        nonRecurringSlots.length >
+                                                            0 && (
+                                                            <p className="font-semibold text-blue-600 mb-2">
+                                                                Recurring Slots:
+                                                            </p>
+                                                        )}
+                                                    {recurringSlots.map(
+                                                        (slot, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className="mb-2"
+                                                            >
+                                                                <p className="flex">
+                                                                    <CalendarDays
+                                                                        size={
+                                                                            18
+                                                                        }
+                                                                        color="gray"
+                                                                        className="mr-1"
+                                                                    />
+                                                                    {Array.isArray(
+                                                                        slot.daysOfWeek
+                                                                    )
+                                                                        ? slot.daysOfWeek.join(
+                                                                              ", "
+                                                                          )
+                                                                        : "N/A"}
+                                                                </p>
+                                                                <p className="flex">
+                                                                    <Clock
+                                                                        size={
+                                                                            18
+                                                                        }
+                                                                        color="gray"
+                                                                        className="mr-1"
+                                                                    />
+                                                                    {slot.startTime ||
+                                                                        "N/A"}{" "}
+                                                                    -{" "}
+                                                                    {slot.endTime ||
+                                                                        "N/A"}
+                                                                </p>
+                                                            </div>
+                                                        )
                                                     )}
-                                                    {recurringSlots.map((slot, index) => (
-                                                        <div key={index} className="mb-2">
-                                                            <p className="flex">
-                                                                <CalendarDays
-                                                                    size={18}
-                                                                    color="gray"
-                                                                    className="mr-1"
-                                                                />
-                                                                {Array.isArray(slot.daysOfWeek)
-                                                                    ? slot.daysOfWeek.join(", ")
-                                                                    : "N/A"}
-                                                            </p>
-                                                            <p className="flex">
-                                                                <Clock
-                                                                    size={18}
-                                                                    color="gray"
-                                                                    className="mr-1"
-                                                                />
-                                                                {slot.startTime || "N/A"} - {slot.endTime || "N/A"}
-                                                            </p>
-                                                        </div>
-                                                    ))}
                                                 </div>
                                             )}
 
                                             {/* Render non-recurring slots */}
                                             {nonRecurringSlots.length > 0 && (
-                                                <div className={recurringSlots.length > 0 ? "border-l-2 border-green-500 pl-3" : ""}>
-                                                    {recurringSlots.length > 0 && nonRecurringSlots.length > 0 && (
-                                                        <p className="font-semibold text-green-600 mb-2">Non-Recurring Slots:</p>
+                                                <div
+                                                    className={
+                                                        recurringSlots.length >
+                                                        0
+                                                            ? "border-l-2 border-green-500 pl-3"
+                                                            : ""
+                                                    }
+                                                >
+                                                    {recurringSlots.length >
+                                                        0 &&
+                                                        nonRecurringSlots.length >
+                                                            0 && (
+                                                            <p className="font-semibold text-green-600 mb-2">
+                                                                Non-Recurring
+                                                                Slots:
+                                                            </p>
+                                                        )}
+                                                    {nonRecurringSlots.map(
+                                                        (slot, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className="mb-2"
+                                                            >
+                                                                <p className="flex">
+                                                                    <CalendarDays
+                                                                        size={
+                                                                            18
+                                                                        }
+                                                                        color="gray"
+                                                                        className="mr-1"
+                                                                    />
+                                                                    {slot.startDate?.slice(
+                                                                        0,
+                                                                        10
+                                                                    ) ||
+                                                                        "N/A"}{" "}
+                                                                    -{" "}
+                                                                    {slot.endDate?.slice(
+                                                                        0,
+                                                                        10
+                                                                    ) || "N/A"}
+                                                                </p>
+                                                                <p className="flex">
+                                                                    <Clock
+                                                                        size={
+                                                                            18
+                                                                        }
+                                                                        color="gray"
+                                                                        className="mr-1"
+                                                                    />
+                                                                    {slot.startDate?.slice(
+                                                                        11,
+                                                                        16
+                                                                    ) ||
+                                                                        "N/A"}{" "}
+                                                                    -{" "}
+                                                                    {slot.endDate?.slice(
+                                                                        11,
+                                                                        16
+                                                                    ) || "N/A"}
+                                                                </p>
+                                                            </div>
+                                                        )
                                                     )}
-                                                    {nonRecurringSlots.map((slot, index) => (
-                                                        <div key={index} className="mb-2">
-                                                            <p className="flex">
-                                                                <CalendarDays
-                                                                    size={18}
-                                                                    color="gray"
-                                                                    className="mr-1"
-                                                                />
-                                                                {slot.startDate?.slice(0, 10) || "N/A"} - {slot.endDate?.slice(0, 10) || "N/A"}
-                                                            </p>
-                                                            <p className="flex">
-                                                                <Clock
-                                                                    size={18}
-                                                                    color="gray"
-                                                                    className="mr-1"
-                                                                />
-                                                                {slot.startDate?.slice(11, 16) || "N/A"} - {slot.endDate?.slice(11, 16) || "N/A"}
-                                                            </p>
-                                                        </div>
-                                                    ))}
                                                 </div>
                                             )}
                                         </div>

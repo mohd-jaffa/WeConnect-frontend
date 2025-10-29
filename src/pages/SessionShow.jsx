@@ -3,7 +3,13 @@ import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Facebook, Twitter, Linkedin } from "lucide-react";
+import {
+    Facebook,
+    Twitter,
+    Linkedin,
+    IndianRupee,
+    AlertCircleIcon,
+} from "lucide-react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,20 +19,26 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "@/context/UserContext";
 import axios from "@/config/axios";
+import useRazorpayPayment from "@/utils/razorpay";
 
 export default function SessionShow() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { handleLogout } = useContext(UserContext);
+    const { handlePayment } = useRazorpayPayment();
     const [date, setDate] = useState("");
     const [sessionDetails, setSessionDetails] = useState(null);
     const [slots, setSlots] = useState(null);
     const [selectedSlot, setSelectedSlot] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [lockError, setLockError] = useState("");
 
     useEffect(() => {
         const fetchTeachers = async () => {
@@ -41,6 +53,15 @@ export default function SessionShow() {
         };
         fetchTeachers();
     }, []);
+
+    useEffect(() => {
+        if (lockError) {
+            const timer = setTimeout(() => {
+                setLockError("");
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [lockError]);
 
     const handleFetchSlots = async (date) => {
         try {
@@ -64,7 +85,12 @@ export default function SessionShow() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault;
+        setLoading(true);
+        e.preventDefault();
+        if (!selectedSlot) {
+            toast.error("Please select a time slot first!");
+            return setLoading(false);
+        }
         const selectedTimeObj = slots.find(
             (ele) => ele.time.start === selectedSlot
         );
@@ -72,15 +98,37 @@ export default function SessionShow() {
             details: id,
             time: selectedTimeObj.time,
         };
-        try {
-            const response = await axios.post("/bookings", payload, {
-                headers: { Authorization: localStorage.getItem("token") },
-            });
-            console.log(response.data);
-            toast.success("slot booking successfull");
-        } catch (err) {
-            console.error(err);
-            toast.error("Something went wrong");
+        const isLocked = await axios.post(
+            "/bookings/lock",
+            { details: id, time: selectedTimeObj.time },
+            { headers: { Authorization: localStorage.getItem("token") } }
+        );
+        if (!isLocked.data.success) {
+            toast.error(isLocked.data.message);
+            setLoading(false);
+            return setLockError(isLocked.data.message);
+        }
+        const success = await handlePayment(
+            sessionDetails?.amount,
+            sessionDetails?._id
+        );
+        if (success) {
+            try {
+                const response = await axios.post("/bookings", payload, {
+                    headers: { Authorization: localStorage.getItem("token") },
+                });
+                console.log(response.data);
+                toast.success("slot booking successfull");
+            } catch (err) {
+                console.error(err);
+                toast.error("Something went wrong");
+            } finally {
+                setLoading(false);
+                navigate("/profile", { state: { menu: "bookings" } });
+            }
+        } else {
+            toast.error("payment failed or cancelled, Booking rejected!");
+            setLoading(false);
         }
     };
 
@@ -166,6 +214,14 @@ export default function SessionShow() {
                     </div>
                 </article>
             </div>
+            <div className="w-[280px] my-5">
+                <Alert className="bg-gray-100 border border-gray-300">
+                    <IndianRupee />
+                    <AlertTitle className="text-bold">
+                        {sessionDetails?.amount}/hr
+                    </AlertTitle>
+                </Alert>
+            </div>
             <div className="flex gap-5 mb-8">
                 <Popover>
                     <PopoverTrigger asChild>
@@ -223,13 +279,30 @@ export default function SessionShow() {
                                 </Label>
                             </div>
                         ))}
+                        {lockError && (
+                            <Alert variant="destructive">
+                                <AlertCircleIcon />
+                                <AlertTitle>
+                                    Unable to book this slot!
+                                </AlertTitle>
+                                <AlertDescription>
+                                    <p>
+                                        Looks like someone else is trying to
+                                        book this slot, please check again after
+                                        5min or select a different slot.
+                                    </p>
+                                </AlertDescription>
+                            </Alert>
+                        )}
                         <Button
                             onClick={handleSubmit}
                             className="w-xs"
                             size="sm"
                             disabled={selectedSlot == ""}
                         >
-                            Book Slot
+                            {loading
+                                ? "Processing..."
+                                : `Pay ₹${sessionDetails?.amount} and book slot`}
                         </Button>
                     </RadioGroup>
                 )}

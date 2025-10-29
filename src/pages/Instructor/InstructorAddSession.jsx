@@ -60,6 +60,7 @@ export default function InstructorAddSession() {
             thumbnail: "",
             description: "",
             slots: [],
+            amount: 1,
         },
         validate: (values) => {
             const errors = {};
@@ -82,6 +83,9 @@ export default function InstructorAddSession() {
             }
             if (!values.slots || values.slots.length === 0) {
                 errors.slots = "At least one session slot is required";
+            }
+            if (!values.amount || values.amount < 1) {
+                errors.slots = "Amount cannot be Zero or less";
             }
             return errors;
         },
@@ -109,7 +113,7 @@ export default function InstructorAddSession() {
                 transformedSlot.isRecurring = true;
                 transformedSlot.startTime = slot.startTime; // Already in HH:MM format
                 transformedSlot.endTime = slot.endTime; // Already in HH:MM format
-                
+
                 // Convert day names to backend format
                 if (slot.days && slot.days.length > 0) {
                     transformedSlot.daysOfWeek = slot.days
@@ -119,7 +123,7 @@ export default function InstructorAddSession() {
             } else {
                 // For non-recurring slots
                 transformedSlot.isRecurring = false;
-                
+
                 // Convert datetime-local format to ISO 8601 with seconds
                 if (slot.startDate) {
                     transformedSlot.startDate = slot.startDate.replace(
@@ -142,16 +146,19 @@ export default function InstructorAddSession() {
     const handleSessionSubmit = async (values) => {
         try {
             setLoading(true);
-            
+
             // Transform slots to match backend schema
             const transformedValues = {
                 ...values,
                 slots: transformSlotsForBackend(values.slots),
             };
-
-            const response = await axios.post("/teachers/sessions", transformedValues, {
-                headers: { Authorization: localStorage.getItem("token") },
-            });
+            const response = await axios.post(
+                "/teachers/sessions",
+                transformedValues,
+                {
+                    headers: { Authorization: localStorage.getItem("token") },
+                }
+            );
             toast.success("Session Added Successfully");
             navigate("/instructor/sessions");
         } catch (err) {
@@ -225,19 +232,48 @@ export default function InstructorAddSession() {
 
                             <FieldSeparator />
 
-                            <Field orientation="responsive">
-                                <FieldContent className="gap-3">
-                                    <FieldLabel htmlFor="category">
-                                        Category
-                                    </FieldLabel>
-                                    <FieldDescription>
-                                        Select Category for your Session
-                                    </FieldDescription>
-                                    <CategoryCombobox
-                                        onChange={handleCategoryChange}
-                                    />
-                                </FieldContent>
-                            </Field>
+                            <div className="flex justify-between">
+                                <div>
+                                    <Field orientation="responsive">
+                                        <FieldContent className="gap-3">
+                                            <FieldLabel htmlFor="category">
+                                                Category
+                                            </FieldLabel>
+                                            <FieldDescription>
+                                                Select Category for your Session
+                                            </FieldDescription>
+                                            <CategoryCombobox
+                                                onChange={handleCategoryChange}
+                                            />
+                                        </FieldContent>
+                                    </Field>
+                                </div>
+                                <div>
+                                    <Field orientation="responsive">
+                                        <FieldContent className="gap-3">
+                                            <FieldLabel htmlFor="title">
+                                                amount
+                                            </FieldLabel>
+                                            <FieldDescription>
+                                                Amount you charge per hour for
+                                                your Session
+                                            </FieldDescription>
+                                            <Input
+                                                id="amount"
+                                                label="Amount"
+                                                placeholder="₹ per hour"
+                                                type="number"
+                                                value={formik.values.amount}
+                                                onChange={formik.handleChange}
+                                                onBlur={formik.handleBlur}
+                                                required
+                                                min={1}
+                                                className=""
+                                            />
+                                        </FieldContent>
+                                    </Field>
+                                </div>
+                            </div>
 
                             <FieldSeparator />
 

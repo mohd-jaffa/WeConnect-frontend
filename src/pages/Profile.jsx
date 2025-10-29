@@ -42,14 +42,21 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import UserContext from "@/context/UserContext";
-import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Bookings from "./Bookings";
 import EditProfile from "./EditProfile";
 
 export default function Profile() {
+    const location = useLocation();
     const { user, handleLogout } = useContext(UserContext);
     const [activeMenu, setActiveMenu] = useState("profile");
+
+    useEffect(() => {
+        if (location.state?.menu) {
+            setActiveMenu(location.state.menu);
+        }
+    }, [location.state]);
 
     if (!user) {
         return (
