@@ -1,26 +1,14 @@
 import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import {
-    Item,
-    ItemActions,
-    ItemContent,
-    ItemDescription,
-    ItemFooter,
-    ItemHeader,
-    ItemMedia,
-    ItemTitle,
-    ItemGroup,
-} from "@/components/ui/item";
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationEllipsis,
+} from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import axios from "@/config/axios";
@@ -32,7 +20,8 @@ import { useNavigate, Link } from "react-router-dom";
 export default function SessionsList() {
     const navigate = useNavigate();
     const { handleLogout } = useContext(UserContext);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const sessionsPerPage = 4;
     const [sessionsList, setSessionsList] = useState(null);
 
     useEffect(() => {
@@ -42,15 +31,28 @@ export default function SessionsList() {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
                 setSessionsList(response.data);
-                console.log(response.data);
             } catch (err) {
-                toast.error("something went wrong, please login again");
+                toast.error("Something went wrong, please login again");
                 handleLogout();
                 navigate("/login");
             }
         };
         fetchTeachers();
     }, []);
+
+    const totalPages = Math.ceil(sessionsList?.length / sessionsPerPage);
+    const startIndex = (currentPage - 1) * sessionsPerPage;
+    const currentSessions = sessionsList?.slice(
+        startIndex,
+        startIndex + sessionsPerPage
+    );
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    };
 
     if (sessionsList == null) {
         return (
@@ -63,22 +65,20 @@ export default function SessionsList() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8 flex-grow min-h-screen">
             <div className="mt-5">
                 <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold">Recent Posts</h2>
-                    <Button variant="outline" asChild>
-                        <Link href="#">All Posts</Link>
-                    </Button>
+                    <h2 className="text-2xl font-bold capitalize">
+                        All sessions
+                    </h2>
                 </div>
-                <div className="grid grid-cols-4 gap-6">
-                    {sessionsList.map((ele) => {
+
+                {/* Grid layout */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {currentSessions.map((ele) => {
                         return (
-                            <Link to={`/session/${ele._id}`}>
-                                <div
-                                    className="bg-card text-card-foreground overflow-hidden rounded-lg border transition-shadow duration-300 hover:shadow-lg"
-                                    key={ele._id}
-                                >
+                            <Link to={`/session/${ele._id}`} key={ele._id}>
+                                <div className="bg-card text-card-foreground overflow-hidden rounded-lg border transition-shadow duration-300 hover:shadow-lg flex flex-col h-full">
                                     <div className="relative">
                                         <img
                                             src={ele.thumbnail}
@@ -91,14 +91,19 @@ export default function SessionsList() {
                                             {ele.category}
                                         </Badge>
                                     </div>
-                                    <div className="grid gap-2 p-4">
-                                        <h3 className="text-lg leading-tight font-semibold">
-                                            {ele.title}
-                                        </h3>
-                                        <p className="text-muted-foreground line-clamp-3 text-sm">
-                                            {ele.description}
-                                        </p>
-                                        <div className="flex justify-between">
+
+                                    {/* Content section */}
+                                    <div className="flex flex-col justify-between flex-grow p-4">
+                                        <div>
+                                            <h3 className="text-lg leading-tight font-semibold mb-2 line-clamp-1">
+                                                {ele.title}
+                                            </h3>
+                                            <p className="text-muted-foreground line-clamp-3 text-sm line-clamp-2">
+                                                {ele.description}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex justify-between items-center mt-4">
                                             <div className="text-muted-foreground flex items-center gap-2 text-sm">
                                                 <Avatar className="h-6 w-6">
                                                     <AvatarImage
@@ -108,8 +113,8 @@ export default function SessionsList() {
                                                         }
                                                     />
                                                     <AvatarFallback>
-                                                        {"authorName"
-                                                            .split(" ")
+                                                        {ele?.teachersId?.name
+                                                            ?.split(" ")
                                                             .map((n) => n[0])
                                                             .join("")}
                                                     </AvatarFallback>
@@ -130,6 +135,65 @@ export default function SessionsList() {
                         );
                     })}
                 </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <Pagination className="mt-8">
+                        <PaginationContent>
+                            {/* Prev Button */}
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    href="#"
+                                    onClick={() =>
+                                        handlePageChange(currentPage - 1)
+                                    }
+                                    className={
+                                        currentPage === 1
+                                            ? "pointer-events-none opacity-50"
+                                            : ""
+                                    }
+                                />
+                            </PaginationItem>
+
+                            {/* Page Numbers */}
+                            {[...Array(totalPages)].map((_, index) => (
+                                <PaginationItem key={index}>
+                                    <PaginationLink
+                                        href="#"
+                                        isActive={currentPage === index + 1}
+                                        onClick={() =>
+                                            handlePageChange(index + 1)
+                                        }
+                                    >
+                                        {index + 1}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}
+
+                            {/* Ellipsis (optional) */}
+                            {totalPages > 5 && currentPage < totalPages - 2 && (
+                                <PaginationItem>
+                                    <PaginationEllipsis />
+                                </PaginationItem>
+                            )}
+
+                            {/* Next Button */}
+                            <PaginationItem>
+                                <PaginationNext
+                                    href="#"
+                                    onClick={() =>
+                                        handlePageChange(currentPage + 1)
+                                    }
+                                    className={
+                                        currentPage === totalPages
+                                            ? "pointer-events-none opacity-50"
+                                            : ""
+                                    }
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+                )}
             </div>
         </div>
     );

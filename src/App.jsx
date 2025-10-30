@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import LandingPage from "./pages/LandingPage";
 import SessionsList from "./pages/SessionsList";
@@ -16,6 +15,9 @@ import InstructorDashboard from "./pages/Instructor/InstructorDashboard";
 import TestPage from "./pages/TestPage";
 import { motion } from "framer-motion";
 import Footer from "./components/Footer";
+import Teachers from "./pages/Teachers";
+import TeachersShow from "./pages/TeachersShow";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
     const { user, isLoggedIn } = useContext(UserContext);
@@ -54,10 +56,18 @@ function App() {
                         }
                     />
                     <Route
-                        path="/dashboard"
+                        path="/teachers"
                         element={
                             <PrivateRoute>
-                                <Dashboard />
+                                <Teachers />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/teacher/:id"
+                        element={
+                            <PrivateRoute>
+                                <TeachersShow />
                             </PrivateRoute>
                         }
                     />
@@ -74,6 +84,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <Profile />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/search"
+                        element={
+                            <PrivateRoute>
+                                <SearchPage />
                             </PrivateRoute>
                         }
                     />

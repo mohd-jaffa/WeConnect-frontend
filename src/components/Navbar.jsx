@@ -17,7 +17,14 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { LogOut, User, BookOpen, SquareChartGantt, Wallet } from "lucide-react";
+import {
+    LogOut,
+    User,
+    BookOpen,
+    SquareChartGantt,
+    Wallet,
+    Home,
+} from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import UserContext from "@/context/UserContext";
@@ -68,7 +75,7 @@ export default function Navbar() {
                                         asChild
                                         className={navigationMenuTriggerStyle()}
                                     >
-                                        <Link to="/dashboard">Dashboard</Link>
+                                        <Link to="/teachers">Instructors</Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
 
@@ -78,6 +85,15 @@ export default function Navbar() {
                                         className={navigationMenuTriggerStyle()}
                                     >
                                         <Link to="/sessions">Sessions</Link>
+                                    </NavigationMenuLink>
+                                </NavigationMenuItem>
+
+                                <NavigationMenuItem>
+                                    <NavigationMenuLink
+                                        asChild
+                                        className={navigationMenuTriggerStyle()}
+                                    >
+                                        <Link to="/search">Search</Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
 

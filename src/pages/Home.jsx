@@ -1,29 +1,37 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { CalendarClock, Users } from "lucide-react";
+import { CalendarClock, Users, Info, Hourglass } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHomeTeachers } from "@/slices/teacherSlice";
+import { fetchHomeSessions } from "@/slices/sessionSlice";
+import { fetchHomeBookings } from "@/slices/bookingSlice";
 
 export default function Home() {
     const dispatch = useDispatch();
-    const { data, error, loading } = useSelector((state) => {
-        return state.teacher;
-    });
+    const { homeTeachersData, homeTeachersLoading, homeTeachersError } =
+        useSelector((state) => state.teacher);
+
+    const { homeSessionsData, homeSessionsLoading, homeSessionsError } =
+        useSelector((state) => state.session);
+
+    const { homeBookingData, homeBookingLoading, homeBookingError } =
+        useSelector((state) => state.booking);
 
     useEffect(() => {
         dispatch(fetchHomeTeachers());
+        dispatch(fetchHomeSessions());
+        dispatch(fetchHomeBookings());
     }, []);
 
     const Carousel = () => {
         const [currentSlide, setCurrentSlide] = useState(0);
-
         const slides = [
             {
                 title: "Welcome back!",
                 subtitle: "Continue your learning journey",
-                description: "You have 2 upcoming sessions this week",
+                description: `You have ${homeBookingData?.upcomingBookings} upcoming sessions!`,
                 color: "bg-card",
                 image: "https://i.ibb.co/DHzhsHm0/Screenshot-2025-10-29-234332-removebg-preview.png",
             },
@@ -175,13 +183,19 @@ export default function Home() {
                     {[
                         {
                             label: "Hours Learned",
-                            value: "24.5",
+                            value: homeBookingData?.successfullBookings,
                             icon: <CalendarClock />,
                         },
+                        ,
                         {
                             label: "Sessions Completed",
-                            value: "12",
+                            value: homeBookingData?.successfullBookings,
                             icon: <Users />,
+                        },
+                        {
+                            label: "Upcoming Sessions",
+                            value: homeBookingData?.upcomingBookings,
+                            icon: <Hourglass />,
                         },
                     ].map((stat) => (
                         <div
@@ -200,11 +214,86 @@ export default function Home() {
         </section>
     );
 
+    const SessionsSection = () => {
+        const SessionCard = ({
+            _id,
+            title,
+            teachersId,
+            description,
+            category,
+            amount,
+        }) => (
+            <div className="p-6 rounded-lg border border-border hover:border-foreground transition space-y-4 group cursor-pointer bg-gray-50">
+                <div className="flex items-start justify-between">
+                    <div className="space-y-2 flex-1">
+                        <h3 className="font-bold text-lg group-hover:text-foreground transition">
+                            {title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                            by {teachersId.name}
+                        </p>
+                    </div>
+                    <span className="text-xs px-3 py-1 bg-card border border-border rounded-full">
+                        {category}
+                    </span>
+                </div>
+
+                <div className="space-y-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                        <Info size={16} className="mt-[2px]" />
+                        {description}
+                    </div>
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <p className="font-bold">₹{amount}</p>
+
+                    <Link to={`/session/${_id}`}>
+                        <Button size="sm" variant="outline">
+                            View Details
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        );
+
+        return (
+            <section className="border-t border-border px-4 sm:px-6 lg:px-8 py-12 bg-card">
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl md:text-3xl font-bold capitalize">
+                            some of our Sessions
+                        </h2>
+                        <Link
+                            to="/sessions"
+                            className="text-sm hover:text-muted-foreground transition"
+                        >
+                            View All →
+                        </Link>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {homeSessionsData.map((ele) => (
+                            <SessionCard key={ele.title} {...ele} />
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    };
+
     const TeachersSection = () => {
-        const TeacherCard = ({ name, skills, avatar, createdAt }) => (
-            <div className="p-6 rounded-lg border border-border hover:border-foreground transition space-y-4 group cursor-pointer">
-                <div className="w-16 h-16 bg-foreground rounded-full flex items-center justify-center text-background font-bold text-xl">
-                    {avatar}
+        const TeacherCard = ({ _id, name, skills, avatar, createdAt }) => (
+            <div className="p-6 rounded-lg border border-border hover:border-foreground transition space-y-4 group cursor-pointer bg-gray-50">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-foreground flex items-center justify-center text-background font-bold text-xl">
+                    {avatar ? (
+                        <img
+                            src={avatar}
+                            alt="Teacher Avatar"
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        "T"
+                    )}
                 </div>
 
                 <div className="space-y-2">
@@ -218,13 +307,15 @@ export default function Home() {
 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
-                        <span>Since {createdAt.slice(0,10)}</span>
+                        <span>Since {createdAt?.slice(0, 10)}</span>
                     </div>
                 </div>
 
-                <Button size="sm" className="w-full">
-                    View Profile
-                </Button>
+                <Link to={`/teacher/${_id}`}>
+                    <Button size="sm" className="w-full">
+                        View Profile
+                    </Button>
+                </Link>
             </div>
         );
         return (
@@ -235,7 +326,7 @@ export default function Home() {
                             Some of our tutors
                         </h2>
                         <Link
-                            href="#"
+                            to="/teachers"
                             className="text-sm hover:text-muted-foreground transition"
                         >
                             View All →
@@ -243,7 +334,7 @@ export default function Home() {
                     </div>
 
                     <div className="grid md:grid-cols-4 gap-6">
-                        {data.map((ele) => (
+                        {homeTeachersData.map((ele) => (
                             <TeacherCard key={ele.name} {...ele} />
                         ))}
                     </div>
@@ -256,6 +347,7 @@ export default function Home() {
         <div>
             <Carousel />
             <Progress />
+            <SessionsSection />
             <TeachersSection />
         </div>
     );
