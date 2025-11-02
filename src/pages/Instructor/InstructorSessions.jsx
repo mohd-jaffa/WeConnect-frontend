@@ -9,6 +9,17 @@ import {
     ItemSeparator,
 } from "@/components/ui/item";
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
     Accordion,
     AccordionContent,
     AccordionItem,
@@ -32,6 +43,8 @@ import {
     CirclePlus,
     CalendarDays,
     Clock,
+    Trash,
+    Trash2,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import React, { useEffect, useState } from "react";
@@ -57,6 +70,18 @@ export default function InstructorSessions() {
         };
         fetchSessions();
     }, []);
+
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`/teachers/sessions/${id}`, {
+                headers: { Authorization: localStorage.getItem("token") },
+            });
+            setSessions((prev) => prev.filter((s) => s._id !== id));
+        } catch (err) {
+            console.error("Error deleting session:", err);
+            alert("Failed to delete session");
+        }
+    };
 
     return (
         <div>
@@ -94,13 +119,52 @@ export default function InstructorSessions() {
                                 </Badge>
                             </CardDescription>
                             <CardAction className="flex">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="absolute top-4 right-4 h-auto p-1"
-                                >
-                                    <Settings className="h-4 w-4" />
-                                </Button>
+                                <Link to={`/instructor/sessions/${ele._id}`}>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute top-4 right-12 h-auto p-1"
+                                    >
+                                        <Settings className="h-4 w-4" />
+                                    </Button>
+                                </Link>
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="absolute top-4 right-4 h-auto p-1 text-red-600"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                Are you sure you want to delete
+                                                this session?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action cannot be undone. It
+                                                will permanently remove this
+                                                session and its data.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                                Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                                className="bg-red-600 hover:bg-red-700"
+                                                onClick={() =>
+                                                    handleDelete(ele._id)
+                                                }
+                                            >
+                                                Delete
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </CardAction>
                         </CardHeader>
 

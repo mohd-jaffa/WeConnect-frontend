@@ -34,7 +34,6 @@ export default function Navbar() {
     const { isLoggedIn, handleLogout, user } = useContext(UserContext);
     const [showAlert, setShowAlert] = useState(false);
 
-    // Hide navbar for admin & teacher
     if (
         isLoggedIn &&
         user &&
@@ -85,6 +84,17 @@ export default function Navbar() {
                                         className={navigationMenuTriggerStyle()}
                                     >
                                         <Link to="/sessions">Sessions</Link>
+                                    </NavigationMenuLink>
+                                </NavigationMenuItem>
+
+                                <NavigationMenuItem>
+                                    <NavigationMenuLink
+                                        asChild
+                                        className={navigationMenuTriggerStyle()}
+                                    >
+                                        <Link to="/assignments">
+                                            Assignments
+                                        </Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
 

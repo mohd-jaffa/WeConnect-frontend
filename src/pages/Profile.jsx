@@ -26,6 +26,7 @@ import {
     PersonStanding,
     ScrollText,
     Calendar1,
+    KeyRound,
 } from "lucide-react";
 import {
     AlertDialog,
@@ -47,6 +48,7 @@ import { Link, useLocation } from "react-router-dom";
 import Bookings from "./Bookings";
 import EditProfile from "./EditProfile";
 import Transactions from "./Transactions";
+import ChangePassword from "./ChangePassword";
 
 export default function Profile() {
     const location = useLocation();
@@ -129,6 +131,22 @@ export default function Profile() {
                         />
                         Transactions
                     </button>
+                    <button
+                        onClick={() => setActiveMenu("changePassword")}
+                        className={`flex gap-2 px-3 py-2 rounded-md transition-all duration-200 ease-in-out
+              ${
+                  activeMenu === "changePassword"
+                      ? "bg-gray-100 font-medium text-gray-900 border-l-4 border-gray-400"
+                      : "hover:bg-gray-50 text-gray-600"
+              }`}
+                    >
+                        <KeyRound
+                            size={16}
+                            strokeWidth={1.5}
+                            className="mt-1"
+                        />
+                        Change Password
+                    </button>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <button
@@ -186,6 +204,8 @@ export default function Profile() {
                 {activeMenu === "bookings" && <Bookings />}
 
                 {activeMenu === "transactions" && <Transactions />}
+
+                {activeMenu === "changePassword" && <ChangePassword />}
             </div>
         </div>
     );

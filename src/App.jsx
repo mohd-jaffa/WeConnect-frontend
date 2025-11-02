@@ -18,6 +18,8 @@ import Footer from "./components/Footer";
 import Teachers from "./pages/Teachers";
 import TeachersShow from "./pages/TeachersShow";
 import SearchPage from "./pages/SearchPage";
+import StudentListAssignments from "./pages/Assignment/StudentListAssignments";
+import StudentViewAssignments from "./pages/Assignment/StudentViewAssignments";
 
 function App() {
     const { user, isLoggedIn } = useContext(UserContext);
@@ -92,6 +94,22 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <SearchPage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/assignments"
+                        element={
+                            <PrivateRoute>
+                                <StudentListAssignments />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/assignments/:id"
+                        element={
+                            <PrivateRoute>
+                                <StudentViewAssignments />
                             </PrivateRoute>
                         }
                     />

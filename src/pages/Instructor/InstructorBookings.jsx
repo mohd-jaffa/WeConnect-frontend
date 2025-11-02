@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "@/config/axios";
 import { rankItem } from "@tanstack/match-sorter-utils";
 import {
@@ -39,6 +39,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 export default function InstructorBookings() {
     const { filter } = useParams();
@@ -47,6 +48,7 @@ export default function InstructorBookings() {
     const [globalFilter, setGlobalFilter] = useState("");
     const [sorting, setSorting] = useState([]);
     const [columnFilters, setColumnFilters] = useState([]);
+    const navigate = useNavigate();
 
     const globalFuzzyFilter = (row, columnId, filterValue) => {
         const search = filterValue.toLowerCase();
@@ -144,30 +146,73 @@ export default function InstructorBookings() {
                 header: "Action",
                 cell: ({ row }) => {
                     const rowInfo = row.original;
+                    const status = rowInfo.status;
+                    const meetLink = rowInfo.meetLink;
+                    const id = rowInfo._id;
                     return (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <Ellipsis className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                    onClick={() => console.log("View", rowInfo)}
-                                >
-                                    View
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    className="text-red-600 focus:text-red-700"
-                                    onClick={() =>
-                                        console.log("Delete", rowInfo)
-                                    }
-                                >
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <>
+                            {status == "upcoming" && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            className="h-8 w-8 p-0"
+                                        >
+                                            <span className="sr-only">
+                                                Open menu
+                                            </span>
+                                            <Ellipsis className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem>
+                                            <a
+                                                href={meetLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                Meet Link
+                                            </a>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            className="text-red-600 focus:text-red-700"
+                                            onClick={() =>
+                                                handleCancelSession(id)
+                                            }
+                                        >
+                                            cancel
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
+
+                            {status == "ongoing" && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            className="h-8 w-8 p-0"
+                                        >
+                                            <span className="sr-only">
+                                                Open menu
+                                            </span>
+                                            <Ellipsis className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem>
+                                            <a
+                                                href={meetLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                Meet Link
+                                            </a>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
+                        </>
                     );
                 },
             },
@@ -210,6 +255,37 @@ export default function InstructorBookings() {
         };
         fetchBookings();
     }, [filter]);
+
+    const handleCancelSession = async (id) => {
+        if (!id) {
+            toast.error("Invalid session ID");
+            return;
+        }
+        if (window.confirm("Are you sure you want to cancel this session?")) {
+            try {
+                const response = await axios.put(`bookings/${id}`, null, {
+                    headers: {
+                        Authorization: localStorage.getItem("token"),
+                    },
+                });
+                if (response.status === 200) {
+                    toast.info("Session has been cancelled successfully!");
+                    navigate("/instructor/bookings/cancelled");
+                } else {
+                    toast.warn("Something went wrong. Please try again.");
+                }
+            } catch (err) {
+                console.error("Error cancelling session:", err);
+                toast.error(
+                    err.response?.data?.message ||
+                        "Failed to cancel the session"
+                );
+            }
+        } else {
+            toast.info("Session cancellation aborted");
+            return;
+        }
+    };
 
     const table = useReactTable({
         data: bookings,

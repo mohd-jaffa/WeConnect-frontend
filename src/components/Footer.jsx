@@ -6,7 +6,7 @@ export default function Footer() {
 
     return (
         <>
-            {user.role == "student" && (
+            {user?.role == "student" && (
                 <div>
                     <footer className="border-t border-border px-4 sm:px-6 lg:px-8 py-12 bg-background">
                         <div className="max-w-6xl mx-auto">

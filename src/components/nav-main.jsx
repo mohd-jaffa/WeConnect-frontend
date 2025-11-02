@@ -1,4 +1,10 @@
-import { ChevronRight, Users, LaptopMinimal, Calendar } from "lucide-react";
+import {
+    ChevronRight,
+    Users,
+    LaptopMinimal,
+    Calendar,
+    LayoutGrid,
+} from "lucide-react";
 import {
     Collapsible,
     CollapsibleContent,
@@ -28,6 +34,14 @@ export function NavMain() {
             <SidebarGroup>
                 <SidebarGroupLabel>Main menu</SidebarGroupLabel>
                 <SidebarMenu>
+                    <SidebarMenuItem>
+                        <Link to="/admin/">
+                            <SidebarMenuButton tooltip="dashboard">
+                                <LayoutGrid />
+                                <span>Dashboard</span>
+                            </SidebarMenuButton>
+                        </Link>
+                    </SidebarMenuItem>
                     <Collapsible
                         asChild
                         className="group/collapsible"
@@ -159,6 +173,14 @@ export function NavMain() {
         <SidebarGroup>
             <SidebarGroupLabel>Main menu</SidebarGroupLabel>
             <SidebarMenu>
+                <SidebarMenuItem>
+                    <Link to="/instructor/">
+                        <SidebarMenuButton tooltip="dashboard">
+                            <LayoutGrid />
+                            <span>Dashboard</span>
+                        </SidebarMenuButton>
+                    </Link>
+                </SidebarMenuItem>
                 <Collapsible
                     asChild
                     className="group/collapsible"

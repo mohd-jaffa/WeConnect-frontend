@@ -157,7 +157,6 @@ export default function AdminBookings() {
                                         save when you&apos;re done.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <AdminManageUpdates />
                                 <DialogFooter>
                                     <DialogClose asChild>
                                         <Button variant="outline">

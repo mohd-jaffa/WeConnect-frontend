@@ -5,6 +5,7 @@ import {
     CreditCard,
     LogOut,
     Sparkles,
+    Pen,
 } from "lucide-react";
 import {
     AlertDialog,
@@ -99,13 +100,6 @@ export function NavUser() {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {/* <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <Sparkles />
-                                Upgrade to Pro
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup> */}
-                        {/* <DropdownMenuSeparator /> */}
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
                                 {user?.role == "teacher" && (
@@ -127,16 +121,26 @@ export function NavUser() {
                                     </Link>
                                 )}
                             </DropdownMenuItem>
-                            {/* <DropdownMenuItem>
-                                <CreditCard />
-                                Billing
-                            </DropdownMenuItem>
                             <DropdownMenuItem>
-                                <Bell />
-                                Notifications
-                            </DropdownMenuItem> */}
+                                {user.role == "teacher" ? (
+                                    <Link
+                                        to="/instructor/password"
+                                        className="flex gap-2"
+                                    >
+                                        <Pen className="mt-[3px]" />
+                                        Reset Password
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        to="/admin/password"
+                                        className="flex gap-2"
+                                    >
+                                        <Pen className="mt-[3px]" />
+                                        Reset Password
+                                    </Link>
+                                )}
+                            </DropdownMenuItem>
                         </DropdownMenuGroup>
-                        {/* <DropdownMenuSeparator /> */}
                         <DropdownMenuItem asChild>
                             <Link onClick={handleLogout} to="/login">
                                 <LogOut />

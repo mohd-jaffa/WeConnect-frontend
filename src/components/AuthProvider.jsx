@@ -101,22 +101,41 @@ export default function AuthProvider(props) {
             toast.dismiss();
             const errorMessage = err?.response?.data?.error || "Login failed";
             toast.error(errorMessage);
-            navigate("/");
         }
     };
 
     const handleProfileUpdate = async (formData) => {
         try {
-            console.log(formData);
             const response = await axios.put("/users/profile", formData, {
                 headers: { Authorization: localStorage.getItem("token") },
             });
             userDispatch({ type: "LOGIN", payload: response.data });
-            console.log(response.data);
             toast.success("profile updated!");
         } catch (err) {
             const errorMessage =
                 err?.response?.data?.error || "Profile Update failed";
+            toast.error(errorMessage);
+        }
+    };
+
+    const handlePasswordChange = async (formData, resetForm) => {
+        try {
+            const response = await axios.put("/users/password", formData, {
+                headers: {
+                    Authorization: localStorage.getItem("token"),
+                },
+            });
+            if (response?.status === 200) {
+                toast.success("Password updated!");
+                resetForm();
+            } else {
+                toast.error("Password update failed!");
+            }
+        } catch (err) {
+            console.log(err);
+            console.log("Error:", err?.response?.data);
+            const errorMessage =
+                err?.response?.data?.error || "Password update failed!";
             toast.error(errorMessage);
         }
     };
@@ -135,6 +154,7 @@ export default function AuthProvider(props) {
                 handleRegister,
                 handleLogout,
                 handleProfileUpdate,
+                handlePasswordChange,
                 userDispatch,
             }}
         >

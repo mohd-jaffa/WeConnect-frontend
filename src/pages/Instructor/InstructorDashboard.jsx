@@ -24,6 +24,9 @@ import InstructorBookings from "./InstructorBookings";
 import InstructorSessions from "./InstructorSessions";
 import InstructorAddSession from "./InstructorAddSession";
 import InstructorProfile from "./InstructorProfile";
+import ChangePassword from "../ChangePassword";
+import InstructorMain from "./InstructorMain";
+import AssignTaskPage from "../Assignment/AssignTaskPage";
 
 export default function InstructorDashboard() {
     const { user } = useContext(UserContext);
@@ -109,6 +112,14 @@ export default function InstructorDashboard() {
 
                     <Routes>
                         <Route
+                            path="/"
+                            element={
+                                <PrivateRoute>
+                                    <InstructorMain />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
                             path="/bookings"
                             element={
                                 <PrivateRoute>
@@ -141,10 +152,34 @@ export default function InstructorDashboard() {
                             }
                         />
                         <Route
+                            path="/sessions/:id"
+                            element={
+                                <PrivateRoute>
+                                    <InstructorAddSession />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
                             path="/profile"
                             element={
                                 <PrivateRoute>
                                     <InstructorProfile />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/password"
+                            element={
+                                <PrivateRoute>
+                                    <ChangePassword />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/assignment"
+                            element={
+                                <PrivateRoute>
+                                    <AssignTaskPage />
                                 </PrivateRoute>
                             }
                         />
