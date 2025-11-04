@@ -158,6 +158,11 @@ export default function EditProfile() {
         }
     };
 
+    console.log("User from context:", user);
+console.log("Formik initial values:", formik.initialValues);
+console.log("Formik current values:", formik.values);
+
+
     return (
         <form onSubmit={formik.handleSubmit}>
             <div className="grid gap-5 animate-fade-in">
