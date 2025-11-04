@@ -20,6 +20,7 @@ import TeachersShow from "./pages/TeachersShow";
 import SearchPage from "./pages/SearchPage";
 import StudentListAssignments from "./pages/Assignment/StudentListAssignments";
 import StudentViewAssignments from "./pages/Assignment/StudentViewAssignments";
+import BookingCalendar from "./pages/BookingCalendar";
 
 function App() {
     const { user, isLoggedIn } = useContext(UserContext);
@@ -110,6 +111,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <StudentViewAssignments />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/calendar"
+                        element={
+                            <PrivateRoute>
+                                <BookingCalendar />
                             </PrivateRoute>
                         }
                     />

@@ -1,9 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "@/config/axios";
 
-// ============================
-// 1️⃣ Fetch Home Sessions
-// ============================
 export const fetchHomeSessions = createAsyncThunk(
     "/sessions/fetchHomeSessions",
     async (undefined, { rejectWithValue }) => {
@@ -19,9 +16,6 @@ export const fetchHomeSessions = createAsyncThunk(
     }
 );
 
-// ============================
-// 2️⃣ Fetch Single Session
-// ============================
 export const fetchSingleSession = createAsyncThunk(
     "/sessions/fetchSingleSession",
     async (id, { rejectWithValue }) => {
@@ -34,28 +28,20 @@ export const fetchSingleSession = createAsyncThunk(
     }
 );
 
-// ============================
-// 3️⃣ Fetch Dashboard Bookings (Using status field)
-// ============================
 export const fetchDashboardBookings = createAsyncThunk(
-    "/bookings/fetchDashboardBookings",
+    "/sessions/fetchDashboardBookings",
     async (undefined, { rejectWithValue }) => {
         try {
             const response = await axios.get("/bookings", {
                 headers: { Authorization: localStorage.getItem("token") },
             });
-
             const allBookings = response.data;
-
-            // ✅ Separate ongoing and upcoming by status
             const ongoing = allBookings.find(
                 (booking) => booking.status === "ongoing"
             );
-
             const upcoming = allBookings
                 .filter((booking) => booking.status === "upcoming")
-                .slice(0, 3); // keep only nearest 3
-
+                .slice(0, 3);
             return { ongoing, upcoming };
         } catch (err) {
             return rejectWithValue(err.message);
@@ -63,9 +49,6 @@ export const fetchDashboardBookings = createAsyncThunk(
     }
 );
 
-// ============================
-// Slice
-// ============================
 const sessionsSlice = createSlice({
     name: "sessions",
     initialState: {
@@ -83,7 +66,6 @@ const sessionsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // ----- Home Sessions -----
             .addCase(fetchHomeSessions.pending, (state) => {
                 state.homeSessionsLoading = true;
             })
@@ -98,7 +80,6 @@ const sessionsSlice = createSlice({
                 state.homeSessionsData = [];
             })
 
-            // ----- Single Session -----
             .addCase(fetchSingleSession.pending, (state) => {
                 state.singleSessionsLoading = true;
             })
@@ -113,7 +94,6 @@ const sessionsSlice = createSlice({
                 state.singleSessionsData = [];
             })
 
-            // ----- Dashboard Bookings -----
             .addCase(fetchDashboardBookings.pending, (state) => {
                 state.dashboardBookingLoading = true;
             })

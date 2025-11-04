@@ -4,6 +4,7 @@ import {
     LaptopMinimal,
     Calendar,
     LayoutGrid,
+    NotebookPen,
 } from "lucide-react";
 import {
     Collapsible,
@@ -232,6 +233,14 @@ export function NavMain() {
                         <SidebarMenuButton tooltip="sessions">
                             <Calendar />
                             <span>Manage Sessions</span>
+                        </SidebarMenuButton>
+                    </Link>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <Link to="/instructor/assignment">
+                        <SidebarMenuButton tooltip="sessions">
+                            <NotebookPen />
+                            <span>Assignments</span>
                         </SidebarMenuButton>
                     </Link>
                 </SidebarMenuItem>
