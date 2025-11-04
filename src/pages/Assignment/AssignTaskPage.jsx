@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 export default function AssignTaskPage() {
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [topic, setTopic] = useState("");
     const [studentId, setStudentId] = useState("");
     const [bookingId, setBookingId] = useState("");
@@ -45,6 +46,7 @@ export default function AssignTaskPage() {
     }, []);
 
     useEffect(() => {
+        setLoading(true);
         const fetchAssignments = async () => {
             try {
                 const response = await axios.get("/assignment", {
@@ -53,6 +55,8 @@ export default function AssignTaskPage() {
                 setAllAssignments(response.data);
             } catch (err) {
                 toast.error(err.message);
+            } finally {
+                setLoading(false);
             }
         };
         if (user?._id) {
@@ -109,7 +113,7 @@ export default function AssignTaskPage() {
         }
     };
 
-    if (allAssignments.length == 0) {
+    if (loading) {
         return (
             <div>
                 <p>loading...</p>
