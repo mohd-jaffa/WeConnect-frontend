@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "../config/axios";
 import UserContext from "@/context/UserContext";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { fetchAdminDashboard } from "@/slices/adminSlice";
 
 const userReducer = (state, action) => {
     switch (action.type) {
@@ -24,6 +26,7 @@ const userReducer = (state, action) => {
 
 export default function AuthProvider(props) {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [userState, userDispatch] = useReducer(userReducer, {
         user: null,
@@ -40,6 +43,9 @@ export default function AuthProvider(props) {
                         },
                     });
                     userDispatch({ type: "LOGIN", payload: response.data });
+                    if (response.data.role == "admin") {
+                        dispatch(fetchAdminDashboard());
+                    }
                 } catch (err) {
                     toast.error("something went wrong, please login again");
                     localStorage.removeItem("token");

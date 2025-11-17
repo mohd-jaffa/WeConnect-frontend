@@ -7,14 +7,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
@@ -39,6 +31,7 @@ export default function Bookings() {
                 const sortedBookings = response.data.sort(
                     (a, b) => new Date(b.time.start) - new Date(a.time.start)
                 );
+                console.log(sortedBookings);
                 setBookings(sortedBookings);
             } catch (err) {
                 toast.error("something went wrong, please login again");
@@ -95,23 +88,23 @@ export default function Bookings() {
                                     return (
                                         <TableRow key={ele._id}>
                                             <TableCell className="font-medium">
-                                                {ele?.teachersId.name}
+                                                {ele?.teachersId?.name}
                                             </TableCell>
                                             <TableCell>
-                                                {ele.details.title}
+                                                {ele?.details?.title}
                                             </TableCell>
                                             <TableCell>
-                                                {ele.details.description}
+                                                {ele?.details?.description}
                                             </TableCell>
                                             <TableCell>
-                                                {ele.details.category}
+                                                {ele?.details?.category}
                                             </TableCell>
                                             <TableCell>
-                                                {ele?.time.start.slice(0, 10)}
+                                                {ele?.time?.start?.slice(0, 10)}
                                             </TableCell>
                                             <TableCell>
                                                 {ele?.time.start
-                                                    .split("T")[1]
+                                                    ?.split("T")[1]
                                                     .slice(0, 5)}
                                             </TableCell>
                                             <TableCell>

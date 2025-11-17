@@ -5,127 +5,201 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import axios from "../config/axios";
-import {
-    HoverCard,
-    HoverCardTrigger,
-    HoverCardContent,
-} from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
-import { CalendarDays } from "lucide-react";
+import EventHoverCard from "../components/EventHoverCard";
+import EventDialog from "../components/EventDialog";
+import { Spinner } from "@/components/ui/spinner";
 
-export default function BookingCalendar() {
+export default function BookingsCalendar() {
+    const [loading, setLoading] = useState(false);
     const [events, setEvents] = useState([]);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [currentTitle, setCurrentTitle] = useState("");
+    const [currentView, setCurrentView] = useState("dayGridMonth");
     const calendarRef = useRef(null);
 
+    // ✅ Fetch all bookings
     useEffect(() => {
         const fetchBookings = async () => {
             try {
+                setLoading(true);
                 const res = await axios.get("/bookings", {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
 
-                // Transform API data to FullCalendar event format
-                const formattedEvents = res.data.map((b) => ({
-                    id: b._id,
-                    title: b.details?.title || "Booked Class",
-                    start: b.time?.start,
-                    end: b.time?.end,
-                    status: b.status,
-                    teacher: b.teachersId?.name || "Teacher",
-                    student: b.studentsId?.name || "Student",
-                    meetLink: b.details?.meetLink || "#",
-                    description:
-                        b.details?.description || "No description available",
-                }));
+                const formatted = res.data.map((ele) => {
+                    const status = ele.status?.toLowerCase();
+                    const colorMap = {
+                        completed: "#22c55e",
+                        cancelled: "#ef4444",
+                        ongoing: "#eab308",
+                        upcoming: "#3b82f6",
+                    };
 
-                setEvents(formattedEvents);
+                    return {
+                        id: ele._id,
+                        title: ele.details?.title || "Session",
+                        start: ele.time?.start,
+                        end: ele.time?.end,
+                        backgroundColor: colorMap[status] || "#3b82f6",
+                        borderColor: colorMap[status] || "#3b82f6",
+                        extendedProps: {
+                            teacher: ele.teachersId?.name,
+                            student: ele.studentsId?.name,
+                            description: ele.details?.description,
+                            meetLink: ele?.meetLink,
+                            status,
+                            start: ele.time?.start,
+                            end: ele.time?.end,
+                        },
+                    };
+                });
+                setEvents(formatted);
             } catch (err) {
                 console.error("Error fetching bookings:", err);
+            } finally {
+                setLoading(false);
             }
         };
         fetchBookings();
     }, []);
 
-    // Render each event using ShadCN HoverCard
+    // ✅ Event HoverCard content
     const renderEventContent = (eventInfo) => {
-        const { event } = eventInfo;
-        const { status, meetLink, teacher, student, description } =
-            event.extendedProps;
-
+        const event = eventInfo.event.extendedProps;
+        const title = eventInfo.event.title;
         return (
-            <HoverCard>
-                <HoverCardTrigger asChild>
-                    <div className="p-1 rounded-md cursor-pointer hover:bg-primary/10">
-                        <span className="font-medium text-sm">
-                            {event.title}
-                        </span>
-                    </div>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-64 space-y-2">
-                    <p className="font-semibold text-base">{event.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                        <strong>Teacher:</strong> {teacher}
-                        <br />
-                        <strong>Student:</strong> {student}
-                    </p>
-                    <p className="text-xs">{description}</p>
-                    <p className="text-xs text-muted-foreground">
-                        {new Date(event.start).toLocaleString()} -{" "}
-                        {new Date(event.end).toLocaleTimeString()}
-                    </p>
-
-                    <div className="flex justify-between items-center">
-                        <Button variant="secondary" size="sm" asChild>
-                            <a
-                                href={meetLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <CalendarDays className="mr-2 h-4 w-4" /> Join
-                                Meet
-                            </a>
-                        </Button>
-
-                        <span
-                            className={`text-xs px-2 py-1 rounded-md ${
-                                status === "completed"
-                                    ? "bg-green-100 text-green-700"
-                                    : status === "cancelled"
-                                    ? "bg-red-100 text-red-700"
-                                    : "bg-blue-100 text-blue-700"
-                            }`}
-                        >
-                            {status}
-                        </span>
-                    </div>
-                </HoverCardContent>
-            </HoverCard>
+            <EventHoverCard event={event}>
+                <div className="p-1 rounded-md cursor-pointer hover:bg-primary/10">
+                    <span className="font-semibold">{title}</span>
+                </div>
+            </EventHoverCard>
         );
     };
 
+    // ✅ On event click, open Dialog
+    const handleEventClick = (clickInfo) => {
+        const event = clickInfo.event.extendedProps;
+        setSelectedEvent({
+            title: clickInfo.event.title,
+            ...event,
+        });
+        setDialogOpen(true);
+    };
+
+    // ✅ Calendar view & navigation controls
+    const handleViewChange = (view) => {
+        const api = calendarRef.current?.getApi();
+        api.changeView(view);
+        setCurrentView(view);
+    };
+
+    const handleDatesSet = (arg) => {
+        setCurrentTitle(arg.view.title);
+    };
+
+    const handlePrev = () => calendarRef.current?.getApi().prev();
+    const handleNext = () => calendarRef.current?.getApi().next();
+    const handleToday = () => calendarRef.current?.getApi().today();
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <Button variant="outline" disabled size="sm">
+                    <Spinner /> Please wait
+                </Button>
+            </div>
+        );
+    }
+
     return (
-        <div className="container mx-auto p-4">
-            <div className="flex justify-between mb-4">
+        <div className="container mx-auto p-4 grid gap-5">
+            {/* Row 1: My Bookings + Legend */}
+            <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold">My Bookings</h2>
-                <div className="space-x-2">
+                <div className="flex gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 bg-blue-500 rounded-full"></span>{" "}
+                        Upcoming
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>{" "}
+                        Ongoing
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 bg-green-500 rounded-full"></span>{" "}
+                        Completed
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 bg-red-500 rounded-full"></span>{" "}
+                        Cancelled
+                    </div>
+                </div>
+            </div>
+
+            {/* Row 2: Filters + Title + Navigation */}
+            <div className="flex justify-between items-center mb-3">
+                {/* Left: View Filters */}
+                <div className="flex gap-2">
                     <Button
-                        onClick={() => calendarRef.current?.getApi().today()}
+                        variant={
+                            currentView === "dayGridMonth"
+                                ? "default"
+                                : "outline"
+                        }
+                        onClick={() => handleViewChange("dayGridMonth")}
                     >
-                        Today
+                        Month
                     </Button>
                     <Button
-                        onClick={() => calendarRef.current?.getApi().prev()}
+                        variant={
+                            currentView === "timeGridWeek"
+                                ? "default"
+                                : "outline"
+                        }
+                        onClick={() => handleViewChange("timeGridWeek")}
                     >
+                        Week
+                    </Button>
+                    <Button
+                        variant={
+                            currentView === "timeGridDay"
+                                ? "default"
+                                : "outline"
+                        }
+                        onClick={() => handleViewChange("timeGridDay")}
+                    >
+                        Day
+                    </Button>
+                    <Button
+                        variant={
+                            currentView === "listWeek" ? "default" : "outline"
+                        }
+                        onClick={() => handleViewChange("listWeek")}
+                    >
+                        List
+                    </Button>
+                </div>
+
+                {/* Center: Calendar Title */}
+                <h3 className="text-2xl font-medium">{currentTitle}</h3>
+
+                {/* Right: Navigation */}
+                <div className="space-x-2">
+                    <Button variant="outline" onClick={handlePrev}>
                         Prev
                     </Button>
-                    <Button
-                        onClick={() => calendarRef.current?.getApi().next()}
-                    >
+                    <Button variant="outline" onClick={handleToday}>
+                        Today
+                    </Button>
+                    <Button variant="outline" onClick={handleNext}>
                         Next
                     </Button>
                 </div>
             </div>
 
+            {/* FullCalendar */}
             <FullCalendar
                 ref={calendarRef}
                 plugins={[
@@ -135,14 +209,20 @@ export default function BookingCalendar() {
                     interactionPlugin,
                 ]}
                 initialView="dayGridMonth"
-                headerToolbar={{
-                    left: "",
-                    center: "title",
-                    right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-                }}
+                height="80vh"
+                headerToolbar={false}
                 events={events}
                 eventContent={renderEventContent}
-                height="auto"
+                eventClick={handleEventClick}
+                eventDisplay="block"
+                datesSet={handleDatesSet}
+            />
+
+            {/* Dialog for event details */}
+            <EventDialog
+                open={dialogOpen}
+                onClose={() => setDialogOpen(false)}
+                event={selectedEvent}
             />
         </div>
     );

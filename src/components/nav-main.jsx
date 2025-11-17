@@ -182,52 +182,14 @@ export function NavMain() {
                         </SidebarMenuButton>
                     </Link>
                 </SidebarMenuItem>
-                <Collapsible
-                    asChild
-                    className="group/collapsible"
-                    defaultOpen={pathname.startsWith("/instructor/bookings")}
-                >
-                    <SidebarMenuItem>
-                        <CollapsibleTrigger asChild>
-                            <SidebarMenuButton tooltip="bookings">
-                                <LaptopMinimal />
-                                <span>Bookings</span>
-                                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                            </SidebarMenuButton>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                            <SidebarMenuSub>
-                                <SidebarMenuSubItem>
-                                    <SidebarMenuSubButton asChild>
-                                        <Link to="/instructor/bookings">
-                                            All Bookings
-                                        </Link>
-                                    </SidebarMenuSubButton>
-                                    <SidebarMenuSubButton asChild>
-                                        <Link to="/instructor/bookings/ongoing">
-                                            Ongoing
-                                        </Link>
-                                    </SidebarMenuSubButton>
-                                    <SidebarMenuSubButton asChild>
-                                        <Link to="/instructor/bookings/upcoming">
-                                            Upcoming
-                                        </Link>
-                                    </SidebarMenuSubButton>
-                                    <SidebarMenuSubButton asChild>
-                                        <Link to="/instructor/bookings/completed">
-                                            Completed
-                                        </Link>
-                                    </SidebarMenuSubButton>
-                                    <SidebarMenuSubButton asChild>
-                                        <Link to="/instructor/bookings/cancelled">
-                                            Cancelled
-                                        </Link>
-                                    </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                            </SidebarMenuSub>
-                        </CollapsibleContent>
-                    </SidebarMenuItem>
-                </Collapsible>
+                <SidebarMenuItem>
+                    <Link to="/instructor/bookings">
+                        <SidebarMenuButton tooltip="bookings">
+                            <LaptopMinimal />
+                            <span>My Bookings</span>
+                        </SidebarMenuButton>
+                    </Link>
+                </SidebarMenuItem>
                 <SidebarMenuItem>
                     <Link to="/instructor/sessions">
                         <SidebarMenuButton tooltip="sessions">
@@ -241,6 +203,14 @@ export function NavMain() {
                         <SidebarMenuButton tooltip="sessions">
                             <NotebookPen />
                             <span>Assignments</span>
+                        </SidebarMenuButton>
+                    </Link>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <Link to="/instructor/students">
+                        <SidebarMenuButton tooltip="my students">
+                            <NotebookPen />
+                            <span>My Students</span>
                         </SidebarMenuButton>
                     </Link>
                 </SidebarMenuItem>
