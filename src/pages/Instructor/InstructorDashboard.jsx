@@ -27,6 +27,8 @@ import InstructorProfile from "./InstructorProfile";
 import ChangePassword from "../ChangePassword";
 import InstructorMain from "./InstructorMain";
 import AssignTaskPage from "../Assignment/AssignTaskPage";
+import InstructorMyStudents from "./InstructorsMyStudents";
+import InstructorsViewStudent from "./InstructorsViewStudent";
 
 export default function InstructorDashboard() {
     const { user } = useContext(UserContext);
@@ -180,6 +182,22 @@ export default function InstructorDashboard() {
                             element={
                                 <PrivateRoute>
                                     <AssignTaskPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/students"
+                            element={
+                                <PrivateRoute>
+                                    <InstructorMyStudents />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/student/:id"
+                            element={
+                                <PrivateRoute>
+                                    <InstructorsViewStudent />
                                 </PrivateRoute>
                             }
                         />

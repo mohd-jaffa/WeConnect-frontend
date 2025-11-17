@@ -9,11 +9,11 @@ import store from "../src/utils/create-store";
 
 createRoot(document.getElementById("root")).render(
     <BrowserRouter>
-        <AuthProvider>
-            <Toaster />
-            <Provider store={store}>
+        <Toaster />
+        <Provider store={store}>
+            <AuthProvider>
                 <App />
-            </Provider>
-        </AuthProvider>
+            </AuthProvider>
+        </Provider>
     </BrowserRouter>
 );

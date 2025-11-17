@@ -138,6 +138,7 @@ export default function InstructorAddSession() {
                 ...values,
                 slots: transformSlotsForBackend(values.slots),
             };
+            console.log(transformedValues);
             if (isEditMode) {
                 await axios.put(`/teachers/sessions/${id}`, transformedValues, {
                     headers: { Authorization: localStorage.getItem("token") },
@@ -191,9 +192,8 @@ export default function InstructorAddSession() {
         if (isEditMode) {
             const fetchSession = async () => {
                 try {
-                    const response = await axios.put(
+                    const response = await axios.get(
                         `/teachers/sessions/${id}`,
-                        undefined,
                         {
                             headers: {
                                 Authorization: localStorage.getItem("token"),
@@ -201,13 +201,14 @@ export default function InstructorAddSession() {
                         }
                     );
                     const data = response.data;
+                    console.log(response.data);
                     formik.setValues({
-                        title: data.title || "",
-                        category: data.category || "",
-                        thumbnail: data.thumbnail || "",
-                        description: data.description || "",
-                        slots: data.slots || [],
-                        amount: data.amount || 1,
+                        title: data.title,
+                        category: data.category,
+                        thumbnail: data.thumbnail,
+                        description: data.description,
+                        slots: data.slots,
+                        amount: data.amount,
                     });
                     if (data.thumbnail) setPreview(data.thumbnail);
                 } catch (err) {

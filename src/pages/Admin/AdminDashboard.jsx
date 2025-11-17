@@ -25,6 +25,7 @@ import AdminBookings from "./AdminBookings";
 import AdminSessions from "./AdminSessions";
 import AdminProfile from "./AdminProfile";
 import ChangePassword from "../ChangePassword";
+import AdminMain from "./AdminMain";
 
 export default function AdminDashboard() {
     const { user } = useContext(UserContext);
@@ -170,6 +171,14 @@ export default function AdminDashboard() {
                             element={
                                 <PrivateRoute>
                                     <ChangePassword />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/"
+                            element={
+                                <PrivateRoute>
+                                    <AdminMain />
                                 </PrivateRoute>
                             }
                         />

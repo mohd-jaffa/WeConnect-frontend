@@ -106,7 +106,6 @@ export default function InstructorSessions() {
                     >
                         <CardHeader>
                             <CardTitle className="flex mb-1 text-lg leading-tight font-semibold">
-                                {/* <BookA size={16} strokeWidth={1.25} color="gray" className="mt-[5.3px] mr-2 " /> */}
                                 {ele.title}
                             </CardTitle>
                             <CardDescription className="text-xs font-mono flex">
@@ -188,7 +187,6 @@ export default function InstructorSessions() {
                                     );
                                 }
 
-                                // Separate recurring and non-recurring slots
                                 const recurringSlots = ele.slots.filter(
                                     (slot) => slot.isRecurring
                                 );
@@ -209,7 +207,6 @@ export default function InstructorSessions() {
                                     <code className="relative rounded py-[0.2rem] font-mono text-sm font-semibold">
                                         Slot Type: {slotTypeLabel}
                                         <div className="mt-2 space-y-4">
-                                            {/* Render recurring slots */}
                                             {recurringSlots.length > 0 && (
                                                 <div className="border-l-2 border-blue-500 pl-3">
                                                     {recurringSlots.length >
@@ -262,7 +259,6 @@ export default function InstructorSessions() {
                                                 </div>
                                             )}
 
-                                            {/* Render non-recurring slots */}
                                             {nonRecurringSlots.length > 0 && (
                                                 <div
                                                     className={

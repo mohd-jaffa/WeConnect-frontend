@@ -1,19 +1,5 @@
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupButton,
-    InputGroupInput,
-    InputGroupTextarea,
-} from "@/components/ui/input-group";
-import { Label } from "@/components/ui/label";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
 import {
     User,
     NotebookPen,
@@ -45,10 +31,10 @@ import { Button } from "@/components/ui/button";
 import UserContext from "@/context/UserContext";
 import { useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Bookings from "./Bookings";
 import EditProfile from "./EditProfile";
 import Transactions from "./Transactions";
 import ChangePassword from "./ChangePassword";
+import BookingsCalendar from "./BookingCalendar";
 
 export default function Profile() {
     const location = useLocation();
@@ -201,7 +187,7 @@ export default function Profile() {
             <div className="flex-1 pl-6">
                 {activeMenu === "profile" && <EditProfile />}
 
-                {activeMenu === "bookings" && <Bookings />}
+                {activeMenu === "bookings" && <BookingsCalendar />}
 
                 {activeMenu === "transactions" && <Transactions />}
 
