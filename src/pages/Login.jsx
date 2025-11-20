@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserContext from "@/context/UserContext";
+import { toast } from "sonner";
 
 export default function Login({ className }) {
     const { handleLogin } = useContext(UserContext);
@@ -47,6 +48,21 @@ export default function Login({ className }) {
             handleLogin(values, resetForm);
         },
     });
+
+    useEffect(() => {
+        toast.info("Please wait a few seconds until the server starts", {
+            style: {
+                background: "#77a5f1ff",
+                color: "white",
+                border: "1px solid #93c5fd",
+            },
+            description:
+                "This is happening because my server is deployed using render",
+            action: {
+                label: "Close",
+            },
+        });
+    }, []);
 
     return (
         <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">

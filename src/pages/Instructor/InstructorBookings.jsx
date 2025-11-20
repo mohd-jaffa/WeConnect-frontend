@@ -248,7 +248,7 @@
 //                 setBookings(filteredBookings);
 //             } catch (error) {
 //                 console.error("Error fetching users:", error);
-//                 alert("Failed to fetch users");
+//                 toast.error("Failed to fetch users");
 //             } finally {
 //                 setLoading(false);
 //             }

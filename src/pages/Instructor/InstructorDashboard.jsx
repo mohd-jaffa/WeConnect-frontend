@@ -116,7 +116,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorMain />
                                 </PrivateRoute>
                             }
@@ -124,7 +124,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/bookings"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorBookings />
                                 </PrivateRoute>
                             }
@@ -132,7 +132,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/bookings/:filter"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorBookings />
                                 </PrivateRoute>
                             }
@@ -140,7 +140,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/sessions"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorSessions />
                                 </PrivateRoute>
                             }
@@ -148,7 +148,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/sessions/add"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorAddSession />
                                 </PrivateRoute>
                             }
@@ -156,7 +156,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/sessions/:id"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorAddSession />
                                 </PrivateRoute>
                             }
@@ -164,7 +164,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/profile"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorProfile />
                                 </PrivateRoute>
                             }
@@ -172,7 +172,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/password"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <ChangePassword />
                                 </PrivateRoute>
                             }
@@ -180,7 +180,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/assignment"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <AssignTaskPage />
                                 </PrivateRoute>
                             }
@@ -188,7 +188,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/students"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorMyStudents />
                                 </PrivateRoute>
                             }
@@ -196,7 +196,7 @@ export default function InstructorDashboard() {
                         <Route
                             path="/student/:id"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["teacher"]}>
                                     <InstructorsViewStudent />
                                 </PrivateRoute>
                             }

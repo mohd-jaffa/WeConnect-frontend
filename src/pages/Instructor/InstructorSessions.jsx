@@ -52,6 +52,7 @@ import axios from "@/config/axios";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export default function InstructorSessions() {
     const [sessions, setSessions] = useState([]);
@@ -65,7 +66,7 @@ export default function InstructorSessions() {
                 setSessions(response.data);
             } catch (err) {
                 console.error("Error fetching sessions:", err);
-                alert("Failed to fetch sessions");
+                toast.error("Failed to fetch sessions");
             }
         };
         fetchSessions();
@@ -79,7 +80,7 @@ export default function InstructorSessions() {
             setSessions((prev) => prev.filter((s) => s._id !== id));
         } catch (err) {
             console.error("Error deleting session:", err);
-            alert("Failed to delete session");
+            toast.error("Failed to delete session");
         }
     };
 

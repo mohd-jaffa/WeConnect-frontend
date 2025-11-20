@@ -133,10 +133,7 @@ export default function SessionShow() {
             setLoading(false);
             return setLockError(isLocked.data.message);
         }
-        const success = await handlePayment(
-            sessionDetails?.amount,
-            sessionDetails?._id
-        );
+        const success = await handlePayment(sessionDetails?._id);
         if (success) {
             try {
                 const response = await axios.post("/bookings", payload, {

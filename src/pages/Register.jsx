@@ -26,8 +26,9 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFormik } from "formik";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "@/context/UserContext";
+import { toast } from "sonner";
 
 export default function Register({ className }) {
     const { handleRegister } = useContext(UserContext);
@@ -80,6 +81,21 @@ export default function Register({ className }) {
     const handleTabChange = (e) => {
         formik.setFieldValue("role", e);
     };
+
+    useEffect(() => {
+        toast.info("Please wait a few seconds until the server starts", {
+            style: {
+                background: "#77a5f1ff",
+                color: "white",
+                border: "1px solid #93c5fd",
+            },
+            description:
+                "This is happening because my server is deployed using render",
+            action: {
+                label: "Close",
+            },
+        });
+    }, []);
 
     return (
         <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">

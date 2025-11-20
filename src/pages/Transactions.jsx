@@ -18,14 +18,17 @@ export default function Transactions() {
                         },
                     }
                 );
-                setPaymentHistory(response.data);
+                const sortedData = response.data.sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                );
+                setPaymentHistory(sortedData);
             } catch (err) {
                 console.log(err);
                 toast.error(err?.response?.data?.error);
             }
         };
         fetchHistory();
-    }, []);
+    }, [user?._id]);
 
     return (
         <div>
@@ -50,28 +53,29 @@ export default function Transactions() {
                     <tbody>
                         {paymentHistory.map((ele) => {
                             return (
-                                <>
-                                    <tr className="even:bg-muted m-0 border-t p-0">
-                                        <td className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right">
-                                            {ele._id}
-                                        </td>
-                                        <td className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right">
-                                            {ele.createdAt.slice(0, 10)}
-                                        </td>
-                                        <td className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right">
-                                            {ele.amount}
-                                        </td>
-                                        <td
-                                            className={`border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right ${
-                                                ele.status === "success"
-                                                    ? "text-green-600"
-                                                    : "text-red-600"
-                                            }`}
-                                        >
-                                            {ele.status}
-                                        </td>
-                                    </tr>
-                                </>
+                                <tr
+                                    key={ele._id}
+                                    className="even:bg-muted m-0 border-t p-0"
+                                >
+                                    <td className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right">
+                                        {ele._id}
+                                    </td>
+                                    <td className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right">
+                                        {ele.createdAt.slice(0, 10)}
+                                    </td>
+                                    <td className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right">
+                                        {ele.amount}
+                                    </td>
+                                    <td
+                                        className={`border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right ${
+                                            ele.status === "success"
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                        }`}
+                                    >
+                                        {ele.status}
+                                    </td>
+                                </tr>
                             );
                         })}
                     </tbody>

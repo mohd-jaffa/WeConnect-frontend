@@ -29,6 +29,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { toast } from "sonner";
 
 export default function AdminSessions() {
     const { filter } = useParams();
@@ -174,7 +175,7 @@ export default function AdminSessions() {
                 setSessions(filteredSessions);
             } catch (error) {
                 console.error("Error fetching users:", error);
-                alert("Failed to fetch users");
+                toast.error("Failed to fetch users");
             } finally {
                 setLoading(false);
             }
