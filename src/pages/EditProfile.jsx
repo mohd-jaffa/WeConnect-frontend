@@ -32,6 +32,7 @@ import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import axios from "@/config/axios";
+import { toast } from "sonner";
 
 const LabeledInput = function LabeledInput({
     id,
@@ -152,7 +153,7 @@ export default function EditProfile() {
                 "Error uploading avatar:",
                 err?.response?.data?.error
             );
-            alert("Failed to upload avatar. Please try again.");
+            toast.error("Failed to upload avatar. Please try again.");
         } finally {
             setUploading(false);
         }

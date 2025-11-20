@@ -113,7 +113,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/users"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <AdminUsers />
                                 </PrivateRoute>
                             }
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/users/:filter"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <AdminUsers />
                                 </PrivateRoute>
                             }
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/bookings"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <AdminBookings />
                                 </PrivateRoute>
                             }
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/bookings/:filter"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <AdminBookings />
                                 </PrivateRoute>
                             }
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/sessions"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <AdminSessions />
                                 </PrivateRoute>
                             }
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/sessions/:filter"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <AdminSessions />
                                 </PrivateRoute>
                             }
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/profile"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <AdminProfile />
                                 </PrivateRoute>
                             }
@@ -169,7 +169,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/password"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <ChangePassword />
                                 </PrivateRoute>
                             }
@@ -177,7 +177,7 @@ export default function AdminDashboard() {
                         <Route
                             path="/"
                             element={
-                                <PrivateRoute>
+                                <PrivateRoute allowedRoles={["admin"]}>
                                     <AdminMain />
                                 </PrivateRoute>
                             }

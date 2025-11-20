@@ -12,7 +12,6 @@ import { useContext } from "react";
 import UserContext from "./context/UserContext";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import InstructorDashboard from "./pages/Instructor/InstructorDashboard";
-import TestPage from "./pages/TestPage";
 import { motion } from "framer-motion";
 import Footer from "./components/Footer";
 import Teachers from "./pages/Teachers";
@@ -21,6 +20,7 @@ import SearchPage from "./pages/SearchPage";
 import StudentListAssignments from "./pages/Assignment/StudentListAssignments";
 import StudentViewAssignments from "./pages/Assignment/StudentViewAssignments";
 import BookingCalendar from "./pages/BookingCalendar";
+import NotFound from "./pages/NotFound";
 
 function App() {
     const { user, isLoggedIn } = useContext(UserContext);
@@ -37,7 +37,7 @@ function App() {
                     <Route
                         path="/admin/*"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["admin"]}>
                                 <AdminDashboard />
                             </PrivateRoute>
                         }
@@ -45,7 +45,7 @@ function App() {
                     <Route
                         path="/instructor/*"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["teacher"]}>
                                 <InstructorDashboard />
                             </PrivateRoute>
                         }
@@ -53,7 +53,7 @@ function App() {
                     <Route
                         path="/home"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["student"]}>
                                 <Home />
                             </PrivateRoute>
                         }
@@ -61,7 +61,7 @@ function App() {
                     <Route
                         path="/teachers"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["student"]}>
                                 <Teachers />
                             </PrivateRoute>
                         }
@@ -69,7 +69,7 @@ function App() {
                     <Route
                         path="/teacher/:id"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["student"]}>
                                 <TeachersShow />
                             </PrivateRoute>
                         }
@@ -77,7 +77,7 @@ function App() {
                     <Route
                         path="/session/:id"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["student"]}>
                                 <SessionShow />
                             </PrivateRoute>
                         }
@@ -85,7 +85,9 @@ function App() {
                     <Route
                         path="/profile"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute
+                                allowedRoles={["student", "admin", "teacher"]}
+                            >
                                 <Profile />
                             </PrivateRoute>
                         }
@@ -93,7 +95,7 @@ function App() {
                     <Route
                         path="/search"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["student"]}>
                                 <SearchPage />
                             </PrivateRoute>
                         }
@@ -101,7 +103,7 @@ function App() {
                     <Route
                         path="/assignments"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["student"]}>
                                 <StudentListAssignments />
                             </PrivateRoute>
                         }
@@ -109,7 +111,7 @@ function App() {
                     <Route
                         path="/assignments/:id"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["student"]}>
                                 <StudentViewAssignments />
                             </PrivateRoute>
                         }
@@ -117,7 +119,7 @@ function App() {
                     <Route
                         path="/calendar"
                         element={
-                            <PrivateRoute>
+                            <PrivateRoute allowedRoles={["student"]}>
                                 <BookingCalendar />
                             </PrivateRoute>
                         }
@@ -126,7 +128,7 @@ function App() {
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/test" element={<TestPage />} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />
             </div>

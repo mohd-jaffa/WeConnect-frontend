@@ -26,7 +26,6 @@ export const fetchAdminDashboard = createAsyncThunk(
                         : acc,
                 0
             );
-            console.log(bookingsRes.data);
             const upcomingBookings = bookingsRes.data.filter(
                 (ele) => ele.status == "upcoming"
             ).length;

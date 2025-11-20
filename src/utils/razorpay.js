@@ -1,31 +1,37 @@
 import axios from "@/config/axios";
 import UserContext from "@/context/UserContext";
 import { useContext } from "react";
+import { toast } from "sonner";
 
 export default function useRazorpayPayment() {
     const { user } = useContext(UserContext);
 
-    const handlePayment = async (amount, sessionId) => {
+    const handlePayment = async (sessionId) => {
         return new Promise(async (resolve) => {
             try {
-                if (amount < 1) {
-                    alert("Minimum amount is ₹1");
-                    return resolve(false);
-                }
-
-                const { data } = await axios.post("/payment/create", {
-                    amount: amount,
-                });
+                const { data } = await axios.post(
+                    "/payment/create",
+                    {
+                        sessionId: sessionId,
+                    },
+                    {
+                        headers: {
+                            Authorization: localStorage.getItem("token"),
+                        },
+                    }
+                );
                 console.log("Backend response:", data);
                 if (!data.orderId || !data.key) {
                     console.error(
                         "Order creation failed - missing fields:",
                         data
                     );
-                    alert("Order creation failed - missing orderId or key");
+                    toast.error(
+                        "Order creation failed - missing orderId or key"
+                    );
                     return resolve(false);
                 }
-                const { orderId, key } = data;
+                const { orderId, key, amount } = data;
                 const options = {
                     key: key,
                     amount: amount,
@@ -49,14 +55,20 @@ export default function useRazorpayPayment() {
                                         response.razorpay_payment_id,
                                     razorpay_signature:
                                         response.razorpay_signature,
+                                },
+                                {
+                                    headers: {
+                                        Authorization:
+                                            localStorage.getItem("token"),
+                                    },
                                 }
                             );
                             if (verifyRes.data.success) {
-                                alert("Payment successful!");
+                                toast.success("Payment successful!");
                                 await axios.post(
                                     "/payment/history",
                                     {
-                                        amount: amount,
+                                        amount: amount / 100,
                                         orderId: orderId,
                                         userId: user._id,
                                         sessionId: sessionId,
@@ -71,11 +83,11 @@ export default function useRazorpayPayment() {
                                 );
                                 return resolve(true);
                             } else {
-                                alert("Payment verification failed!");
+                                toast.error("Payment verification failed!");
                                 await axios.post(
                                     "/payment/history",
                                     {
-                                        amount: amount,
+                                        amount: amount / 100,
                                         orderId: orderId,
                                         userId: user._id,
                                         sessionId: sessionId,
@@ -92,11 +104,11 @@ export default function useRazorpayPayment() {
                             }
                         } catch (error) {
                             console.error("Verification error:", error);
-                            alert("Payment verification failed!");
+                            toast.error("Payment verification failed!");
                             await axios.post(
                                 "/payment/history",
                                 {
-                                    amount: amount,
+                                    amount: amount / 100,
                                     orderId: orderId,
                                     userId: user._id,
                                     sessionId: sessionId,
@@ -118,7 +130,7 @@ export default function useRazorpayPayment() {
                             await axios.post(
                                 "/payment/history",
                                 {
-                                    amount: amount,
+                                    amount: amount / 100,
                                     orderId: orderId,
                                     userId: user._id,
                                     sessionId: sessionId,
@@ -142,7 +154,7 @@ export default function useRazorpayPayment() {
                 await axios.post(
                     "/payment/history",
                     {
-                        amount: amount,
+                        amount: "-",
                         orderId: orderId,
                         userId: user._id,
                         sessionId: sessionId,
