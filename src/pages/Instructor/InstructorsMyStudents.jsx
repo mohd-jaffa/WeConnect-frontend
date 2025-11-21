@@ -25,7 +25,9 @@ export default function InstructorMyStudents() {
                 setMyStudents(response.data);
             } catch (err) {
                 console.error(err);
-                toast.error("Something went wrong while loading students.");
+                toast.error("Something went wrong while loading students.", {
+                    theme: "error",
+                });
             } finally {
                 setLoading(false);
             }

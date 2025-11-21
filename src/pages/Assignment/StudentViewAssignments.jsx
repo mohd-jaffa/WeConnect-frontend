@@ -29,7 +29,7 @@ export default function StudentViewAssignments() {
                 setAnswers(Array(response.data.questions?.length).fill(""));
             } catch (err) {
                 console.log(err);
-                toast.error(err.message);
+                toast.error(err.message, { theme: "error" });
             }
         };
         fetchAssignments();
@@ -62,7 +62,8 @@ export default function StudentViewAssignments() {
         toast.info(
             `Test submitted! You answered ${
                 answers.filter((a) => a !== "").length
-            } out of ${assignment?.questions?.length} questions.`
+            } out of ${assignment?.questions?.length} questions.`,
+            { theme: "info" }
         );
         navigate("/assignments");
         setSubmitting(false);

@@ -32,14 +32,15 @@ export default function AssignTaskPage() {
                 const response = await axios.get("/bookings", {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
+                console.log(response.data);
                 const oneWeekAgo = new Date();
                 oneWeekAgo.setDate(oneWeekAgo.getDate() - 3);
                 const recentBookings = response.data.filter(
                     (ele) => new Date(ele?.createdAt) >= oneWeekAgo
                 );
-                setAllBookings(recentBookings);
+                setAllBookings(response.data);
             } catch (err) {
-                toast.error(err.message);
+                toast.error(err.message, { theme: "error" });
             }
         };
         fetchBookings();
@@ -54,7 +55,7 @@ export default function AssignTaskPage() {
                 });
                 setAllAssignments(response.data);
             } catch (err) {
-                toast.error(err.message);
+                toast.error(err.message, { theme: "error" });
             } finally {
                 setLoading(false);
             }
@@ -91,7 +92,9 @@ export default function AssignTaskPage() {
             );
 
             if (res.data.success) {
-                toast.success("Assignment generated successfully!");
+                toast.success("Assignment generated successfully!", {
+                    theme: "success",
+                });
                 setAllAssignments((prev) => [res.data.assignment, ...prev]);
                 setTopic("");
                 setBookingId("");
@@ -99,7 +102,8 @@ export default function AssignTaskPage() {
                 // navigate(0);
             } else {
                 toast.error(
-                    res.data.message || "Failed to generate assignment."
+                    res.data.message || "Failed to generate assignment.",
+                    { theme: "error" }
                 );
             }
         } catch (err) {
@@ -107,7 +111,7 @@ export default function AssignTaskPage() {
                 err?.response?.data?.message ||
                 err?.response?.data ||
                 err.message;
-            toast.error(serverMsg);
+            toast.error(serverMsg, { theme: "error" });
         } finally {
             setIsSubmitting(false);
         }

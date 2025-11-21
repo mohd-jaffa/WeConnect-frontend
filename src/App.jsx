@@ -21,6 +21,8 @@ import StudentListAssignments from "./pages/Assignment/StudentListAssignments";
 import StudentViewAssignments from "./pages/Assignment/StudentViewAssignments";
 import BookingCalendar from "./pages/BookingCalendar";
 import NotFound from "./pages/NotFound";
+import ChatPage from "./pages/ChatPage";
+import InboxPage from "./pages/InboxPage";
 
 function App() {
     const { user, isLoggedIn } = useContext(UserContext);
@@ -129,6 +131,11 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="*" element={<NotFound />} />
+                    <Route
+                        path="/chat/:studentId/:teacherId"
+                        element={<ChatPage />}
+                    />
+                    <Route path="/inbox" element={<InboxPage />} />
                 </Routes>
                 <Footer />
             </div>

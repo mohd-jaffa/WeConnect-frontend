@@ -32,7 +32,9 @@ export default function SessionsList() {
                 });
                 setSessionsList(response.data);
             } catch (err) {
-                toast.error("Something went wrong, please login again");
+                toast.error("Something went wrong, please login again", {
+                    theme: "error",
+                });
                 handleLogout();
                 navigate("/login");
             }

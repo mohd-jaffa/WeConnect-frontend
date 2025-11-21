@@ -99,7 +99,7 @@ export default function TeachersShow() {
             <div className="flex items-center justify-between pt-4 border-t border-border">
                 <p className="font-bold text-lg">₹{amount}</p>
                 <Link to={`/session/${id}`}>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="info">
                         View Details
                     </Button>
                 </Link>

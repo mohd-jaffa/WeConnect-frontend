@@ -24,7 +24,7 @@ export default function Transactions() {
                 setPaymentHistory(sortedData);
             } catch (err) {
                 console.log(err);
-                toast.error(err?.response?.data?.error);
+                toast.error(err?.response?.data?.error, { theme: "error" });
             }
         };
         fetchHistory();

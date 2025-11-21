@@ -34,7 +34,9 @@ export default function Bookings() {
                 console.log(sortedBookings);
                 setBookings(sortedBookings);
             } catch (err) {
-                toast.error("something went wrong, please login again");
+                toast.error("something went wrong, please login again", {
+                    theme: "error",
+                });
                 handleLogout();
                 navigate("/login");
             }

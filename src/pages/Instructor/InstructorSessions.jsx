@@ -66,7 +66,7 @@ export default function InstructorSessions() {
                 setSessions(response.data);
             } catch (err) {
                 console.error("Error fetching sessions:", err);
-                toast.error("Failed to fetch sessions");
+                toast.error("Failed to fetch sessions", { theme: "error" });
             }
         };
         fetchSessions();
@@ -80,7 +80,7 @@ export default function InstructorSessions() {
             setSessions((prev) => prev.filter((s) => s._id !== id));
         } catch (err) {
             console.error("Error deleting session:", err);
-            toast.error("Failed to delete session");
+            toast.error("Failed to delete session", { theme: "error" });
         }
     };
 

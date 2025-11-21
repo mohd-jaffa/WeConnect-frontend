@@ -153,7 +153,9 @@ export default function InstructorProfile() {
                 "Error uploading avatar:",
                 err?.response?.data?.error
             );
-            toast.error("Failed to upload avatar. Please try again.");
+            toast.error("Failed to upload avatar. Please try again.", {
+                theme: "error",
+            });
         } finally {
             setUploading(false);
         }

@@ -143,17 +143,23 @@ export default function InstructorAddSession() {
                 await axios.put(`/teachers/sessions/${id}`, transformedValues, {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
-                toast.success("Session updated successfully!");
+                toast.success("Session updated successfully!", {
+                    theme: "success",
+                });
             } else {
                 await axios.post("/teachers/sessions", transformedValues, {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
-                toast.success("Session added successfully!");
+                toast.success("Session added successfully!", {
+                    theme: "success",
+                });
             }
             navigate("/instructor/sessions");
         } catch (err) {
             console.error(err);
-            toast.error("Failed to save session. Please try again.");
+            toast.error("Failed to save session. Please try again.", {
+                theme: "error",
+            });
         } finally {
             setLoading(false);
         }
@@ -182,7 +188,9 @@ export default function InstructorAddSession() {
             setPreview(previewUrl);
         } catch (err) {
             console.error(err);
-            toast.error("Failed to upload thumbnail. Please try again.");
+            toast.error("Failed to upload thumbnail. Please try again.", {
+                theme: "error",
+            });
         } finally {
             setUploading(false);
         }
@@ -213,7 +221,9 @@ export default function InstructorAddSession() {
                     if (data.thumbnail) setPreview(data.thumbnail);
                 } catch (err) {
                     console.error("Error fetching session:", err);
-                    toast.error("Failed to load session details");
+                    toast.error("Failed to load session details", {
+                        theme: "error",
+                    });
                 }
             };
             fetchSession();

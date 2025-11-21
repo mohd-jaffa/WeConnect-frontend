@@ -38,7 +38,7 @@ export default function SearchPage() {
                     filteredSessions: response.data.sessions,
                 });
             } catch (err) {
-                toast.error("something went wrong!");
+                toast.error("something went wrong!", { theme: "error" });
             }
         }
     };

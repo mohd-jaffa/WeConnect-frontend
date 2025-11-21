@@ -67,7 +67,7 @@ export default function Teachers() {
                 </div>
             </div>
             <Link to={`/teacher/${_id}`}>
-                <Button size="sm" className="w-full">
+                <Button size="sm" className="w-full" variant="info">
                     View Profile
                 </Button>
             </Link>

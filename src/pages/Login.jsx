@@ -51,16 +51,12 @@ export default function Login({ className }) {
 
     useEffect(() => {
         toast.info("Please wait a few seconds until the server starts", {
-            style: {
-                background: "#77a5f1ff",
-                color: "white",
-                border: "1px solid #93c5fd",
-            },
             description:
                 "This is happening because my server is deployed using render",
             action: {
                 label: "Close",
             },
+            theme: "info",
         });
     }, []);
 

@@ -9,7 +9,7 @@ import store from "../src/utils/create-store";
 
 createRoot(document.getElementById("root")).render(
     <BrowserRouter>
-        <Toaster />
+        <Toaster richColors />
         <Provider store={store}>
             <AuthProvider>
                 <App />

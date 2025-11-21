@@ -71,7 +71,9 @@ export default function SessionShow() {
                 const response = await axios.get(`/sessions/${id}`);
                 setSessionDetails(response.data);
             } catch (err) {
-                toast.error("something went wrong, please login again");
+                toast.error("something went wrong, please login again", {
+                    theme: "error",
+                });
                 handleLogout();
                 navigate("/login");
             }
@@ -105,7 +107,7 @@ export default function SessionShow() {
             setSlots(response.data);
         } catch (err) {
             console.error(err);
-            toast.error("Something went wrong");
+            toast.error("Something went wrong", { theme: "error" });
         }
     };
 
@@ -113,7 +115,7 @@ export default function SessionShow() {
         setLoading(true);
         e.preventDefault();
         if (!selectedSlot) {
-            toast.error("Please select a time slot first!");
+            toast.error("Please select a time slot first!", { theme: "error" });
             return setLoading(false);
         }
         const selectedTimeObj = slots.find(
@@ -129,7 +131,7 @@ export default function SessionShow() {
             { headers: { Authorization: localStorage.getItem("token") } }
         );
         if (!isLocked.data.success) {
-            toast.error(isLocked.data.message);
+            toast.error(isLocked.data.message, { theme: "error" });
             setLoading(false);
             return setLockError(isLocked.data.message);
         }
@@ -140,16 +142,18 @@ export default function SessionShow() {
                     headers: { Authorization: localStorage.getItem("token") },
                 });
                 console.log(response.data);
-                toast.success("slot booking successfull");
+                toast.success("slot booking successfull", { theme: "success" });
             } catch (err) {
                 console.error(err);
-                toast.error("Something went wrong");
+                toast.error("Something went wrong", { theme: "error" });
             } finally {
                 setLoading(false);
                 navigate("/profile", { state: { menu: "bookings" } });
             }
         } else {
-            toast.error("payment failed or cancelled, Booking rejected!");
+            toast.error("payment failed or cancelled, Booking rejected!", {
+                theme: "error",
+            });
             setLoading(false);
         }
     };
@@ -346,6 +350,7 @@ export default function SessionShow() {
                             className="w-xs"
                             size="sm"
                             disabled={selectedSlot == ""}
+                            variant="green"
                         >
                             {loading
                                 ? "Processing..."

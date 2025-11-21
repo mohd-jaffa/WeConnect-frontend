@@ -153,16 +153,17 @@ export default function EditProfile() {
                 "Error uploading avatar:",
                 err?.response?.data?.error
             );
-            toast.error("Failed to upload avatar. Please try again.");
+            toast.error("Failed to upload avatar. Please try again.", {
+                theme: "error",
+            });
         } finally {
             setUploading(false);
         }
     };
 
     console.log("User from context:", user);
-console.log("Formik initial values:", formik.initialValues);
-console.log("Formik current values:", formik.values);
-
+    console.log("Formik initial values:", formik.initialValues);
+    console.log("Formik current values:", formik.values);
 
     return (
         <form onSubmit={formik.handleSubmit}>

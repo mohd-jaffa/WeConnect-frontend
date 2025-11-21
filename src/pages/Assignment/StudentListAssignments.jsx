@@ -17,7 +17,7 @@ export default function StudentListAssignments() {
                 });
                 setAssignments(response.data);
             } catch (err) {
-                toast.error(err.message);
+                toast.error(err.message, { theme: "error" });
             }
         };
         fetchAssignments();

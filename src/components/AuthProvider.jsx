@@ -47,7 +47,9 @@ export default function AuthProvider(props) {
                         dispatch(fetchAdminDashboard());
                     }
                 } catch (err) {
-                    toast.error("something went wrong, please login again");
+                    toast.error("something went wrong, please login again", {
+                        theme: "error",
+                    });
                     localStorage.removeItem("token");
                     userDispatch({ type: "LOGOUT" });
                     navigate("/login");
@@ -64,7 +66,7 @@ export default function AuthProvider(props) {
             console.table(response.data);
             await setTimeout(() => {
                 toast.dismiss(toastId);
-                toast.success("Registered successfully!");
+                toast.success("Registered successfully!", { theme: "success" });
                 resetForm();
                 navigate("/login");
             }, 2000);
@@ -77,13 +79,15 @@ export default function AuthProvider(props) {
             const errorMessage = Array.isArray(err?.response?.data?.error)
                 ? err.response.data.error.map((e) => e.message).join(", ")
                 : err?.response?.data?.error || "Registration failed";
-            toast.error(errorMessage);
+            toast.error(errorMessage, { theme: "error" });
         }
     };
 
     const handleLogin = async (formData, resetForm) => {
         try {
-            const toastId = toast.loading("Logging in...");
+            const toastId = toast.loading("Logging in...", {
+                theme: "loading",
+            });
             const response = await axios.post("/login", formData);
             localStorage.setItem("token", response.data.token);
             const userResponse = await axios.get("/users/profile", {
@@ -93,20 +97,21 @@ export default function AuthProvider(props) {
             console.table(userResponse.data);
             await setTimeout(() => {
                 toast.dismiss(toastId);
-                toast.success("Logged in successfully!");
+                toast.success("Logged in successfully!", { theme: "success" });
                 resetForm();
                 if (userResponse.data.role === "student") {
                     navigate("/home");
                 } else if (userResponse.data.role === "teacher") {
                     navigate("/instructor");
                 } else if (userResponse.data.role === "admin") {
+                    dispatch(fetchAdminDashboard());
                     navigate("/admin");
                 }
             }, 2000);
         } catch (err) {
             toast.dismiss();
             const errorMessage = err?.response?.data?.error || "Login failed";
-            toast.error(errorMessage);
+            toast.error(errorMessage, { theme: "error" });
         }
     };
 
@@ -116,11 +121,11 @@ export default function AuthProvider(props) {
                 headers: { Authorization: localStorage.getItem("token") },
             });
             userDispatch({ type: "LOGIN", payload: response.data });
-            toast.success("profile updated!");
+            toast.success("profile updated!", { theme: "success" });
         } catch (err) {
             const errorMessage =
                 err?.response?.data?.error || "Profile Update failed";
-            toast.error(errorMessage);
+            toast.error(errorMessage, { theme: "error" });
         }
     };
 
@@ -132,10 +137,10 @@ export default function AuthProvider(props) {
                 },
             });
             if (response?.status === 200) {
-                toast.success("Password updated!");
+                toast.success("Password updated!", { theme: "success" });
                 resetForm();
             } else {
-                toast.error("Password update failed!");
+                toast.error("Password update failed!", { theme: "error" });
             }
         } catch (err) {
             console.log(err);
@@ -149,7 +154,7 @@ export default function AuthProvider(props) {
     const handleLogout = () => {
         localStorage.removeItem("token");
         userDispatch({ type: "LOGOUT" });
-        toast.info("Logout success!");
+        toast.info("Logout success!", { theme: "info" });
     };
 
     return (

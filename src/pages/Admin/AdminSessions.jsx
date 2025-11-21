@@ -175,7 +175,7 @@ export default function AdminSessions() {
                 setSessions(filteredSessions);
             } catch (error) {
                 console.error("Error fetching users:", error);
-                toast.error("Failed to fetch users");
+                toast.error("Failed to fetch users", { theme: "error" });
             } finally {
                 setLoading(false);
             }

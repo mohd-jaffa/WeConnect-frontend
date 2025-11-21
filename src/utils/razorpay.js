@@ -27,7 +27,8 @@ export default function useRazorpayPayment() {
                         data
                     );
                     toast.error(
-                        "Order creation failed - missing orderId or key"
+                        "Order creation failed - missing orderId or key",
+                        { theme: "error" }
                     );
                     return resolve(false);
                 }
@@ -64,7 +65,9 @@ export default function useRazorpayPayment() {
                                 }
                             );
                             if (verifyRes.data.success) {
-                                toast.success("Payment successful!");
+                                toast.success("Payment successful!", {
+                                    theme: "success",
+                                });
                                 await axios.post(
                                     "/payment/history",
                                     {
@@ -83,7 +86,9 @@ export default function useRazorpayPayment() {
                                 );
                                 return resolve(true);
                             } else {
-                                toast.error("Payment verification failed!");
+                                toast.error("Payment verification failed!", {
+                                    theme: "error",
+                                });
                                 await axios.post(
                                     "/payment/history",
                                     {
@@ -104,7 +109,9 @@ export default function useRazorpayPayment() {
                             }
                         } catch (error) {
                             console.error("Verification error:", error);
-                            toast.error("Payment verification failed!");
+                            toast.error("Payment verification failed!", {
+                                theme: "error",
+                            });
                             await axios.post(
                                 "/payment/history",
                                 {
